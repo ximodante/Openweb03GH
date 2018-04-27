@@ -34,6 +34,7 @@ import openadmin.model.control.Role;
 import openadmin.util.edu.ReflectionUtils;
 //import openadmin.model.control.ActionViewRole;
 import openadmin.util.lang.LangType;
+import openadmin.util.reflection.ReflectionField;
 import openadmin.web.components.PFMenuBar;
 import openadmin.web.components.PFPanelMenu;
 import openadmin.web.view.DefaultView;
@@ -202,44 +203,56 @@ public class MainScreen implements Serializable {
 	public void loadScreen(Number pMenuItem) 
 			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 		
-		System.out.println("Model directe");
-		
 		if (ctx.numberView() > 0) ctx.deleteAllView();
 		
 		MenuItem menuItem = new MenuItem();
 		menuItem.setId(pMenuItem);
 		menuItem = ctx.getConnControl().findObjectPK(menuItem);
 		
-		screen(menuItem);
+		screen(menuItem, null);
 	
 	}
 	
 	public void loadScreenRecursive(String pMenuItem) 
 			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 		
-		System.out.println("Model recursiu");
 		MenuItem menuItem = new MenuItem();
 		menuItem.setDescription(pMenuItem);
 		menuItem = ctx.getConnControl().findObjectDescription(menuItem);
 		
-		screen(menuItem);
+		screen(menuItem, null);
 	
 	}
 	
-	public void screen(MenuItem pMenuItem) 
+	public void exitScreenRecursive() 
+			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
+		
+		Base _obj = ctx.getView(ctx.numberView()).getBase();
+		
+		ReflectionField refl = new ReflectionField();
+		
+		refl.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView() - 1).getMetodo());
+		
+		ctx.deleteView();
+		
+		//Object before screen
+		Base obj =  ctx.getView(ctx.numberView()).getBase();
+		
+		MenuItem menuItem = ctx.getView(ctx.numberView()).getMenuItem();
+		ctx.deleteView();
+		
+		screen(menuItem, obj);
+		
+	}
+	
+	public void screen(MenuItem pMenuItem, Object obj) 
 			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException{
 		
 		//Delete screen
 		FacesContext _context = FacesContext.getCurrentInstance();	
 		OutputPanel outView = (OutputPanel)_context.getViewRoot().findComponent("form1:idContingut");
 		
-		//System.out.println("Llista main: " + outView.getChildren());
-		
-		//System.out.println("Nom vista: " + viewDefault);
-		
 		if (outView.getChildCount() > 0) {
-			
-			System.out.println("Esborra component del contingut");
 			
 			outView.getChildren().clear();
 		}
@@ -255,51 +268,27 @@ public class MainScreen implements Serializable {
 		.collect(Collectors.toList());
 		
 		//Create object
-		Object obj = ReflectionUtils.createObject(pMenuItem.getClassName().getDescription());
+		if (null == obj) {
+			
+			obj = ReflectionUtils.createObject(pMenuItem.getClassName().getDescription());
+			
+		}
 		
 		//Default View
 		if (pMenuItem.getViewType().equals("default")) {
 					
 			Integer numberView = ctx.numberView()+1;
 			ViewFacade view = new DefaultView();
+			view.setMenuItem(pMenuItem);
 			view.setCtx(ctx);
 			view.setBase((Base) obj);
 			view.execute(lang, numberView, lstActionView);
 			outView.getChildren().add(view.getOutPanel());
 			
-			System.out.println("Afegeix outputpanel + vista: " + numberView);
 			ctx.setView(numberView, view);
 					
 		}	
-		
-		
 	}
-	
-	/**
-	public void closedScreen() {
-		
-		Base _obj = ctx.getView(ctx.numberView()).getBase();
-		
-		if (null != _obj && ctx.numberView() > 1){
-			
-			//FacesContext _context = FacesContext.getCurrentInstance();
-			
-			//OutputPanel outView = (OutputPanel)_context.getViewRoot().findComponent("form1:idContingut");
-			
-			if (outView.getChildCount() > 0) {
-				
-				
-				System.out.println("Esborra 2 component del contingu eixir");
-				
-				outView.getChildren().clear();
-				
-			}
-			
-			ctx.deleteView();
-			outView.getChildren().add(ctx.getView(ctx.numberView()).getOutPanel());
-		}
-	}*/
-
 	
 	/**
 	public void carregaMenuLateral (String pId, String pValor) {

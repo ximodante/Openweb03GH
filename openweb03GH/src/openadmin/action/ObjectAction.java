@@ -11,6 +11,7 @@ import org.primefaces.context.RequestContext;
 import lombok.Getter;
 import lombok.Setter;
 import openadmin.model.Base;
+import openadmin.model.control.MenuItem;
 import openadmin.util.edu.ReflectionUtils;
 import openadmin.util.lang.WebMessages;
 import openadmin.util.reflection.ReflectionField;
@@ -27,6 +28,9 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 	
 	@Getter @Setter
 	private ContextAction ctx;
+	
+	@Getter @Setter
+	private MenuItem menuItem;
 	
 	//To edit
 	private Base objOriginal;
@@ -110,18 +114,18 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 	public void _exit() {
 		
 			
-		Base _obj = ctx.getView(ctx.numberView()).getBase();
+		//Base _obj = ctx.getView(ctx.numberView()).getBase();
 			
-		if (null != _obj && ctx.numberView() > 1){
+		if (null != getBase() && ctx.numberView() > 1){
 						
 			//ReflectionField refl = new ReflectionField();
 				
-			//refl.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView() - 1).getMetodo());
+			//refl.copyObject(getBase(), ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView() - 1).getMetodo());
 			
 			FacesContext _context = FacesContext.getCurrentInstance();
 				
 			OutputPanel outView = (OutputPanel)_context.getViewRoot().findComponent("form1:idContingut");
-			
+
 			System.out.println("Llista exit: " + outView.getChildren().get(0).getId());
 		
 			if (outView.getChildCount() > 0) {

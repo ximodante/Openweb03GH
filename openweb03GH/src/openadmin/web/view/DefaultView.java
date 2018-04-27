@@ -78,7 +78,6 @@ public class DefaultView extends ObjectAction implements Serializable, ViewFacad
 		outPanel = new OutputPanel();
 		outPanel.setStyleClass("caixaViewTp1");
 		outPanel.setId("idviewdefault");
-		
 	}
 
 }

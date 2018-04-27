@@ -164,8 +164,8 @@ public class PFMenuBar implements Serializable{
 			
 			item = new DefaultMenuItem(langType.msgActions("exit"));
 			item.setId("iditemexit");
-			item.setCommand("#{ctx.getView(" + view + ")._exit()}");
-			//item.setCommand("#{main._exit()}");
+			//item.setCommand("#{ctx.getView(" + view + ")._exit()}");
+			item.setCommand("#{main.exitScreenRecursive()}");
 			item.setUpdate("form1:idContingut");
 			menuModel.addElement(item);
 		}

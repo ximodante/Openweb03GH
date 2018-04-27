@@ -25,4 +25,5 @@ public interface ViewFacade extends ObjectActionFacade {
 			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException;
 	
 	public OutputPanel getOutPanel();
+	
 }
