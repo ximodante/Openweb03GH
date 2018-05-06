@@ -2,6 +2,8 @@ package openadmin.action;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.faces.context.FacesContext;
 
@@ -37,6 +39,8 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 	
 	@Getter
 	private String metodo;
+	
+	private List<Base> lstbase;
 	
 	public void _new() {
 		
@@ -96,9 +100,18 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 	public void _search() {
 		
  		System.out.println("BUSCA");
+ 		
+ 		List<Base> lstbaseNew = new ArrayList<Base>();
+		
+ 		base.setDescription("%");
+ 		
+		lstbaseNew = ctx.getConnControl().findObjects(base);
+		
+		lstbase = SerialClone.clone(lstbaseNew);
+ 		
  		PFDialog dialeg = new PFDialog();
  		
- 		dialeg.panel01();
+ 		dialeg.panel02(lstbase);
  		
 	}
 	
