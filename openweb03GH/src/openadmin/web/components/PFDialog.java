@@ -5,27 +5,44 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.el.MethodExpression;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIOutput;
 import javax.faces.component.html.HtmlOutputText;
 import javax.faces.context.FacesContext;
 
 import org.primefaces.PrimeFaces;
+import org.primefaces.behavior.ajax.AjaxBehavior;
+import org.primefaces.behavior.ajax.AjaxBehaviorListenerImpl;
 import org.primefaces.component.outputpanel.OutputPanel;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.component.column.Column;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.dialog.Dialog;
 
+import org.primefaces.model.SelectableDataModel; 
+import javax.faces.model.ListDataModel;
+
 import openadmin.model.Base;
 import openadmin.util.faces.UtilFaces;
+import openadmin.util.lang.LangType;
 
 public class PFDialog {
 
 	private OutputPanel panelDialogo;	
 	
+	private LangType langType;
+	
+	public PFDialog(LangType pLangType) {
+		
+		langType = pLangType;
+		
+	}
 	
 	public String  panel01(List<Base> lstbase) {
 		
+		FacesContext _context = FacesContext.getCurrentInstance();
 		//PrimeFaces.current().dialog().showMessageDynamic(new FacesMessage(severity, summary, detail));
 		Map<String,Object> properties  = new HashMap<String,Object>();
 		properties.put("modal", true);
@@ -37,7 +54,9 @@ public class PFDialog {
 		PrimeFaces.current().dialog().openDynamic("/pages/dialogs/dialogo01.xhtml", properties, null);
 		//DefaultRequestContext.getCurrentInstance().openDialog("/pages/dialogs/dialogo02.xhtml", properties, null);
 		
-		//UtilFaces.findComponentOfId(":formDialog01", "idContingutDialog");
+		UIComponent component = _context.getViewRoot().findComponent("form1");
+		
+		UtilFaces.findComponentOfId(component, "idContingutDialog");
 		
 		return "";
 		
@@ -70,7 +89,7 @@ public class PFDialog {
 		dialog.setDynamic(true);
 		dialog.setFooter("Alex");
 		dialog.setDraggable(true);
-		dialog.setMinWidth(600);
+		dialog.setMinWidth(300);
 		dialog.setClosable(true);
 		dialog.setModal(true);
 		
@@ -90,21 +109,28 @@ public class PFDialog {
 		FacesContext _context = FacesContext.getCurrentInstance();
 		
 		DataTable table = (DataTable) _context.getApplication().createComponent(DataTable.COMPONENT_TYPE);
-		
 		table.setId("idlist");
 		table.setRows(10);
 		table.setValue(lstbase);
 		table.setVar("pbase");
+		table.setSelectionMode("single");
+		table.setSelection("#{ctx.getView(ctx.numberView()).selectRow()}");
+		table.setRowKey("#{pbase.id}");
+		//table.setRowSelectMode(_rowSelectMode);
 		
 		Base base = lstbase.get(0);
-		Column column;
+		
+		UIOutput tableTitle = (UIOutput)_context.getApplication().createComponent(UIOutput.COMPONENT_TYPE);
+		tableTitle.setValue(langType.msgDao(base.getClass().getSimpleName()));
+		table.getFacets().put("header", tableTitle);
+		
+		
+		Column column = (Column) _context.getApplication().createComponent(Column.COMPONENT_TYPE);
 		
 		for (Field f: base.getClass().getDeclaredFields()){				
+			
 			//Exclusions
-			
-			System.out.println("Atributs:  " + f.getName());
-			
-			
+			//System.out.println("Atributs:  " + f.getName());	
 			if (	f.getName().equals("debuglog") ||
 					f.getName().equals("historiclog") ||
 					f.getName().equals ("serialVersionUID"))
@@ -119,15 +145,15 @@ public class PFDialog {
 				HtmlOutputText head = new HtmlOutputText();
 				
 				//Value column head
-				head.setValue(f.getName());
+				head.setValue(langType.msgLabels(base.getClass().getSimpleName(), f.getName()));
 				column.setHeader(head);
 												
 				//add component to column
-				//typeComponent(f);
 				//If is String	
 				if (f.getType().getSimpleName().endsWith("String") || 
 					f.getType().getSimpleName().endsWith("Integer") ||			
-					f.getType().getSimpleName().endsWith("Date")) {	
+					f.getType().getSimpleName().endsWith("Date")    ||
+					f.getType().getSimpleName().endsWith("Short")) {	
 				
 				 HtmlOutputText outText = new HtmlOutputText();
 				 
@@ -138,9 +164,33 @@ public class PFDialog {
 			
 				 column.getChildren().add(outText);
 				
+				 //Object
+				} else if (f.getType().getName().startsWith("openadmin.model")) {
+					
+					HtmlOutputText outText = new HtmlOutputText();
+				 
+					outText.setValueExpression("value", _context.getApplication().getExpressionFactory().createValueExpression(
+							_context.getELContext(), 
+						 "#{pbase." +  f.getName() + ".description}",
+						  String.class ));
+				
+					column.getChildren().add(outText);
+				
 				}
 				
+				/**
+				MethodExpression me = _context.getApplication().getExpressionFactory().createMethodExpression(_context.getELContext(),
+					     "#{ctx.getView(ctx.numberView()).selectRow()}", String.class, new Class[0]);
 				
+				MethodExpression meArg = _context.getApplication().getExpressionFactory().createMethodExpression(_context.getELContext(),
+					     "#{ctx.getView(ctx.numberView()).selectRow()}", String.class, new Class[]{SelectEvent.class});
+				
+				AjaxBehavior ajaxBehavior = new AjaxBehavior();
+				ajaxBehavior.setUpdate("form1");
+				ajaxBehavior.setProcess("@this");
+				ajaxBehavior.addAjaxBehaviorListener(new AjaxBehaviorListenerImpl(me, meArg));
+				table.addClientBehavior("rowSelect", ajaxBehavior);
+				*/
 				//add column to data table
 				table.getChildren().add(column);	
 		}

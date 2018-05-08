@@ -7,13 +7,13 @@ import javax.faces.context.FacesContext;
 
 public class UtilFaces {
 
-	public static UIComponent findComponentOfId(String pRoot, String id){
+	public static UIComponent findComponentOfId(UIComponent pRoot, String id){
 		
-		UIComponent root = FacesContext.getCurrentInstance().getViewRoot().findComponent(pRoot);
+		UIComponent root = pRoot;
 		
+		System.out.println("Component root: " + root);
+		System.out.println("Component root: " + root.getId());
 		if(root.getId().equals(id)){
-	    	
-	    	System.out.println("Component root: " + id);
 	    	
 	        return root;
 	    }
@@ -27,7 +27,7 @@ public class UtilFaces {
 	        		System.out.println("Component5: " + subUiComponent.getClientId());
 	        		System.out.println("Component6: " + subUiComponent.getFamily());
 	        		
-	                UIComponent returnComponent = findComponentOfId(subUiComponent.getId(), id);
+	                UIComponent returnComponent = findComponentOfId(subUiComponent, id);
 	                
 	                System.out.println("Component: " + returnComponent);
 	                System.out.println("Component client: " + returnComponent.getClientId());

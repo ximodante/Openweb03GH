@@ -91,6 +91,7 @@ public class ContextAction implements Serializable {
 	LogDao log = null;
 	
 	@Inject
+	@Getter
 	private LangType langType;
 	
 	@Getter @Setter
