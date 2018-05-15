@@ -45,7 +45,7 @@ public class PFTable implements Serializable {
 		table.setValue(baseDataModel);
 		table.setVar("pbase");
 		table.setSelectionMode("single");
-		table.setRowKey("#{pbase.description}");
+		//table.setRowKey("#{pbase.description}");
 		//table.setSelection("#{ctx.getView(ctx.sizeView()).setBase(pbase)}");
 		
 		Base base = lstbase.get(0);
@@ -118,7 +118,7 @@ public class PFTable implements Serializable {
 				AjaxBehavior ajaxBehavior = new AjaxBehavior();
 				ajaxBehavior.setUpdate("form1:idlist");
 				ajaxBehavior.setProcess("@this");
-				ajaxBehavior.addAjaxBehaviorListener(new AjaxBehaviorListenerImpl(me, meArg));
+				ajaxBehavior.addAjaxBehaviorListener(new AjaxBehaviorListenerImpl(meArg,null));
 				table.addClientBehavior("rowSelect", ajaxBehavior);
 				
 				//add column to data table

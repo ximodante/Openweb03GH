@@ -14,16 +14,10 @@ public class BaseDataModel  extends ListDataModel<Base> implements SelectableDat
 
 		private static final long serialVersionUID = 14051803L;
 		
-		private List<Base> lstBase;
-		
-		public BaseDataModel() {
-			
-		}
-		
-	    public BaseDataModel(Object pData) {
+	    public BaseDataModel(List<Base> pData) {
 	    	
-	    	setWrappedData(pData);
-	    	lstBase = (List<Base>) pData;
+	    	super(pData);
+	   
 	    }
 	
 		@Override
@@ -31,16 +25,22 @@ public class BaseDataModel  extends ListDataModel<Base> implements SelectableDat
 			
 			System.out.println("Base model: " + pDescription);
 			
-			//List<Base> lstBase = (List<Base>) getWrappedData();  
-	        for(Base pBase : lstBase) { 
+			List<Base> lstBase = (List<Base>) getWrappedData();  
+	        
+			int comptador = 0;
+			
+			for(Base pBase : lstBase) { 
 	        	
-	        	System.out.println("LstBase: " + pBase.getDescription());
+	        	System.out.println("LstBase: " + pBase.getDescription() + " - " + comptador++);
 	        	
-	            if(pBase.getDescription().equals(pDescription)) 
+	            if(pBase.getDescription().equals(pDescription)) {
 	            	
 	            	System.out.println("Base model select: " + pBase.getDescription());
 	            	
 	                return pBase; 
+	            	
+	            }
+	               	
 	        } 
 			
 			return null;
