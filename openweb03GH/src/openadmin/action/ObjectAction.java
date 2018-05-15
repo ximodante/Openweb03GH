@@ -5,8 +5,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.outputpanel.OutputPanel;
 import org.primefaces.event.SelectEvent;
 
@@ -15,6 +17,7 @@ import lombok.Setter;
 import openadmin.model.Base;
 import openadmin.model.control.MenuItem;
 import openadmin.util.edu.ReflectionUtils;
+import openadmin.util.faces.UtilFaces;
 import openadmin.util.lang.WebMessages;
 import openadmin.util.reflection.SerialClone;
 import openadmin.web.components.PFDialog;
@@ -113,8 +116,26 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		
  		PFDialog dialeg = new PFDialog(ctx.getLangType());
  		
- 		dialeg.panel01(lstbase);
+ 		dialeg.dialog01(lstbase);
  		
+	}
+	
+	//Closed dialog, param pDialog: ID component 
+	public void closedDialog(String pDialog) {
+		
+		FacesContext _context = FacesContext.getCurrentInstance();
+		UIComponent component = _context.getViewRoot().findComponent("form1");
+		
+		UIComponent dialog = _context.getViewRoot().findComponent("form1:"+pDialog);
+		
+		if (null != dialog) {
+			
+			PrimeFaces.current().executeScript("PF('widget').hide()");
+			dialog.getChildren().clear();
+			UtilFaces.removeComponentOfId(component, pDialog);
+		}
+		
+		
 	}
 	
 	public void selectRow(SelectEvent event) {
@@ -123,9 +144,9 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		
 	}
 	
-	public void selectRow(Base pBase) {
+	public void selectRow() {
 		
-		System.out.println("Selecció fila2: " + pBase.getId());
+		System.out.println("Selecció fila2: ");
 		
 	}
 	

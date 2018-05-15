@@ -1,8 +1,10 @@
 package openadmin.web;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 import javax.enterprise.context.RequestScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -26,9 +28,6 @@ public class LoginAction implements Serializable{
 	
 	@Inject @Getter @Setter
 	private ContextAction ctx;
-	
-	@Inject @Getter @Setter
-	private LangType lang;
 	
 	@Getter @Setter
 	private String langLogin;
@@ -57,13 +56,14 @@ public class LoginAction implements Serializable{
 			result = "main";
 		
 		}
-					
+		
 		return result;
 	}
 	
 	public void changeLang(ValueChangeEvent e) {
 				
-		lang.changeLocale( e.getNewValue().toString());
+		FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(e.getNewValue().toString()));
+		
 		setLangLogin(e.getNewValue().toString());
 	}
 	
