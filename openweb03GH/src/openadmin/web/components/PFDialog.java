@@ -90,9 +90,10 @@ public class PFDialog implements Serializable {
 		
 		form.getChildren().add(dialog);
 		
-		RequestContext.getCurrentInstance().execute("PF('widget').show()");
-		RequestContext.getCurrentInstance().update("form1");
-		
+		//RequestContext.getCurrentInstance().execute("PF('widget').show()");
+		PrimeFaces.current().executeScript("PF('widget').show()");
+		//RequestContext.getCurrentInstance().update("form1");
+		PrimeFaces.current().ajax().update("form1");
 	}
 	
 	public String  dialog02(List<Base> lstbase) {
