@@ -42,10 +42,10 @@ public class User extends Audit implements Base, java.io.Serializable {
 	private static final long serialVersionUID = 01011001L;
 	
 	/** attribute that contains the user identifier*/
-	@Getter
+	@Getter @Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 	
 	/** attribute that contains the user name*/	
 	@NotNull
@@ -133,9 +133,6 @@ public class User extends Audit implements Base, java.io.Serializable {
 	}
 	
 	/** Getters and setters*/	
-	public void setId(Number pId) {
-		this.id = pId.intValue();
-	}
 
 	/**
 	 * <desc> Accessor of writing which gives us the encrypted password</desc>

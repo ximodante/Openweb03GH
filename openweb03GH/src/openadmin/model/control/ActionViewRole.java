@@ -30,11 +30,11 @@ public class ActionViewRole extends Audit implements Base, java.io.Serializable 
 	private static final long serialVersionUID = 01011001L;
 	
 	/** attribute that contain the identifier*/
-	@Getter
+	@Getter  @Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	@Default(visible=true)
-	private Short id;
+	private Long id;
 	
 	/** attribute that contains the description (Unique value)*/
 	@Getter
@@ -63,10 +63,7 @@ public class ActionViewRole extends Audit implements Base, java.io.Serializable 
 	private Action action;
 	
 	/** Getters and setters*/	
-	public void setId(Number pId) {
-		this.id = pId.shortValue();
-	}
-	
+
 	public void setDescription(String pDescription) {
 				
 		if( null != getMenuItem() ||null !=  getAction() || null != getRole())

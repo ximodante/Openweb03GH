@@ -38,11 +38,11 @@ public class Program extends Audit implements Base, java.io.Serializable {
 	private static final long serialVersionUID = 01011001L;
 	
 	/** attribute that contains the identifier*/
-	@Getter
+	@Getter  @Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	@Default(visible=true)
-	private Short id;
+	private Long id;
 	
 	/** attribute that contains the program name (description), unique value*/
 	@Getter
@@ -67,10 +67,6 @@ public class Program extends Audit implements Base, java.io.Serializable {
 	}
 
 	/** Getters and setters*/
-	public void setId(Number id) {
-		
-		this.id = id.shortValue();
-	}
 	
 	public void setDescription(String pDescription) {
 

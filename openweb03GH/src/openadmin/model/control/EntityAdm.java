@@ -37,11 +37,11 @@ public class EntityAdm extends Audit implements Base, java.io.Serializable {
 	private static final long serialVersionUID = 01011001L;
 	
 	/** attribute that contains the identifier*/
-	@Getter
+	@Getter  @Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Default(visible=true)
-	private Short id;
+	private Long id;
 	
 	/** attribute that contains the description*/
 	@Getter @Setter
@@ -78,11 +78,6 @@ public class EntityAdm extends Audit implements Base, java.io.Serializable {
 	public EntityAdm(String pDescription){
 		
 		setDescription(pDescription.toLowerCase());
-	}
-	
-	/** Getters and setters*/
-	public void setId(Number pId) {
-		this.id = pId.shortValue();
 	}
 		
 }

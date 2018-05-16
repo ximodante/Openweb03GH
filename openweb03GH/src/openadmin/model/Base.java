@@ -18,9 +18,9 @@ public interface Base extends Comparable<Base>{
 	 * <post> the return is the identifier of x </post>
 	 * @return Identifier of object
 	 */	
-	public Number getId();
+	public Long getId();
 	
-	public void setId(Number pId);
+	public void setId(Long pId);
 	
 	
 	/**

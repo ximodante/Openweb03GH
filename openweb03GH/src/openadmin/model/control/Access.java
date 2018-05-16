@@ -43,11 +43,11 @@ public class Access extends Audit implements Base, java.io.Serializable {
 	private static final long serialVersionUID = 01011001L;
 	
 	/** attribute that contain the identifier*/
-	@Getter
+	@Getter  @Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	@Default(visible=true)
-	private Integer id;
+	private Long id;
 	
 	/** attribute that contains the access description*/	
 	@Getter
@@ -82,10 +82,6 @@ public class Access extends Audit implements Base, java.io.Serializable {
 	private EntityAdm entityAdm;
 	
 	/** Getters and setters*/	
-
-	public void setId(Number pId) {
-		this.id = pId.intValue();
-	}
 
 	public void setDescription(String pDescription) {
 		

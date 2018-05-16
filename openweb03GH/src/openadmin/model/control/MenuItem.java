@@ -39,10 +39,10 @@ public class MenuItem extends Audit implements Base, Comparable<Base>, java.io.S
 	private static final long serialVersionUID = 28110901L;
 
 	/** attribute that contains the identifier*/
-	@Getter
+	@Getter @Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	
-	private Short id;
+	private Long id;
 	
 	/** attribute that contains the description, unique value*/
 	@Getter
@@ -83,10 +83,6 @@ public class MenuItem extends Audit implements Base, Comparable<Base>, java.io.S
 	@Getter @Setter
 	@Column(name="ordreItem")
 	private Integer orden;
-
-	public void setId(Number pId) {
-		this.id = pId.shortValue();
-	}
 
 	public void setDescription(String pDescription) {
 				

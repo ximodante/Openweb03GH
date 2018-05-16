@@ -19,7 +19,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import openadmin.model.Audit;
 import openadmin.model.Base;
@@ -41,10 +40,10 @@ public class Action extends Audit implements Base, java.io.Serializable {
 	private static final long serialVersionUID = 01011001L;
 	
 	/** attribute that contains the identifier*/
-	@Getter
+	@Getter  @Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	
-	private Short id;
+	private Long id;
 	
 	/** attribute that contains the description, unique value*/
 	@Getter
@@ -68,11 +67,6 @@ public class Action extends Audit implements Base, java.io.Serializable {
 	private Integer grup;
 	
 	/** Getters and setters*/
-
-	public void setId(Number pId) {
-		this.id = pId.shortValue();
-	}
-
 	
 	public void setDescription(String pDescription) {
 		

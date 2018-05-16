@@ -6,11 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.Getter;
+import lombok.Setter;
 import openadmin.model.Audit;
 import openadmin.model.Base;
 
@@ -22,10 +22,10 @@ public class Configuracio extends Audit implements Base, java.io.Serializable {
 	private static final long serialVersionUID = 28101701L;
 	
 	/** attribute that contains the user identifier*/
-	@Getter
+	@Getter  @Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 	
 	/** clau*/
 	@Getter
@@ -51,10 +51,6 @@ public class Configuracio extends Audit implements Base, java.io.Serializable {
 	
 	/** Getters and setters*/
 	
-	public void setId(Number pId) {
-		this.id = pId.intValue();
-	}
-
 	public void setDescription(String pDescription) {
 		
 		this.description = pDescription.toUpperCase();

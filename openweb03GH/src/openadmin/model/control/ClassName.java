@@ -38,10 +38,10 @@ public class ClassName extends Audit implements Base, java.io.Serializable {
 	private static final long serialVersionUID = 01011001L;
 	
 	/** Field that contains the identifier*/
-	@Getter
+	@Getter  @Setter
 	@Id	
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Short id;
+	private Long id;
 	
 	/** Field that contains the description*/	
 	@Getter @Setter
@@ -57,16 +57,6 @@ public class ClassName extends Audit implements Base, java.io.Serializable {
 	public ClassName(String pDescription) {
 		
 		this.description = pDescription;
-	}
-
-	/**
-	 * <desc> Accessor of writing which gives us the identifier</desc>
-	 * <pre> x is an instance of ActionClass</pre>
-	 * <post> the identifier is stored</post>
-	 * @param pId, is the identifier of object
-	 */	
-	public void setId(Number pId) {
-		this.id = pId.shortValue();
 	}
 
 }

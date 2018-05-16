@@ -32,6 +32,7 @@ import lombok.Setter;
 import lombok.ToString;
 import openadmin.model.Audit;
 import openadmin.model.Base;
+import openadmin.model.control.Program;
 
 @Entity
 @Table(name = "log", schema = "log")
@@ -40,10 +41,10 @@ public class Log extends Audit implements Base, Serializable {
 	
 	private static final long serialVersionUID = 06111701L;
 	
-	@Getter
+	@Getter @Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 	
 	@Getter @Setter
 	@Size(max = 50)
@@ -96,23 +97,10 @@ public class Log extends Audit implements Base, Serializable {
 		
 	}
 	
-	public void setId(Number id) {
-		this.id = id.intValue();
-	}
-	
 	public void setPerson(String pPerson) {
 		this.person=StringUtils.truncate(pPerson,50);
 	}
-	/*
-	public String getDescription() {
-		return description;
-	}
-	
-	public void setDescription(String pDescription) {
-		this.description = pDescription;
-	}
-	
-    */
+
 	@Override
 	public String toString(){
 		 

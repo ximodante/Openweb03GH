@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.Setter;
 import openadmin.model.Audit;
 import openadmin.model.Base;
+import openadmin.model.control.Program;
 
 @Entity
 @Table(name = "detalleLog", schema = "log")
@@ -25,10 +26,10 @@ public class Detail extends Audit implements Base, Serializable {
 	private static final long serialVersionUID = 06111702L;
 	
 	/** attribute that contains the identifier*/
-	@Getter
+	@Getter @Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	
-	private Integer id;
+	private Long id;
 	
 	@Getter
 	@Size(max = 200)
@@ -62,10 +63,6 @@ public class Detail extends Audit implements Base, Serializable {
 	
 	public Detail() {
 		
-	}
-	
-	public void setId(Number id) {
-		this.id = id.intValue();
 	}
 	
 	public void setDescription(String pDescription) {

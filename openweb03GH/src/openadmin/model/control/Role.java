@@ -36,16 +36,16 @@ import lombok.ToString;
 @Entity
 @ToString @NoArgsConstructor
 @Table(name = "role", schema = "control")
-public class Role extends Audit implements Base, java.io.Serializable {
+public class Role extends Audit implements Base, Comparable<Base>, java.io.Serializable {
 
 	private static final long serialVersionUID = 01011001L;
 	
 	/** attribute that contains the identifier*/
-	@Getter
+	@Getter  @Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	@Default(visible=true)
-	private Short id;
+	private Long id;
 	
 	/** attribute that contains the description, unique value*/
 	@Getter
@@ -65,12 +65,19 @@ public class Role extends Audit implements Base, java.io.Serializable {
 	}
 	
 	/** Getters and setters*/
-	public void setId(Number pId) {
-		this.id = pId.shortValue();
-	}
 	
 	public void setDescription(String pDescription) {
 		
 		this.description = pDescription.toUpperCase();
+	}
+	
+	@Override
+	
+	
+	public int compareTo(Base o) {
+		
+		Role rol = (Role) o;
+		    
+		return description.compareTo(rol.getDescription());
 	}
 }

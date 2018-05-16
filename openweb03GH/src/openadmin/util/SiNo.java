@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import openadmin.model.Audit;
 import openadmin.model.Base;
+import openadmin.model.control.Program;
 
 @Entity
 @Table(name = "sino", schema = "util")
@@ -21,10 +22,10 @@ public class SiNo extends Audit implements Base, java.io.Serializable {
 	
 	private static final long serialVersionUID = 29061201L;
 	
-	@Getter
+	@Getter @Setter
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Short id;	
+	private Long id;	
 	
 	/** attribute that contains the description, unique value*/
 	@Size(max = 2)
@@ -43,14 +44,6 @@ public class SiNo extends Audit implements Base, java.io.Serializable {
 	private boolean detailLog = false;
 	
 	public SiNo(){
-		
-	}
-	
-	/** Getters and setters*/	
-	
-	public void setId(Number id) {
-		
-		this.id = id.shortValue();
 		
 	}
 
