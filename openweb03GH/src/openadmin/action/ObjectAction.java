@@ -9,7 +9,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import org.primefaces.PrimeFaces;
-import org.primefaces.component.outputpanel.OutputPanel;
 import org.primefaces.event.SelectEvent;
 
 import lombok.Getter;
@@ -152,6 +151,8 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 	
 	public void setBase(Base pBase) {
 		
+		System.out.println("Base: "  + pBase);
+		
 		objOriginal = SerialClone.clone(pBase);
 
 		this.base =  pBase;
@@ -159,6 +160,7 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 	} 
 	
 	//Copy object
+	/**
 	public void _exit() {
 		
 			
@@ -192,6 +194,6 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 				
 		}
 			
-	}
+	}*/
 	
 }
