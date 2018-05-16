@@ -140,7 +140,7 @@ public class MainScreen implements Serializable {
 	
 	}
 		
-	public void loadMenuItems(Number pRol, Number pProgram) {
+	public void loadMenuItems(Long pRol, Long pProgram) {
 		
 		menuLateral = new DefaultMenuModel();
 		
@@ -200,7 +200,7 @@ public class MainScreen implements Serializable {
 	*
 	*              Load screen
 	********************************************************************************************************************************/
-	public void loadScreen(Number pMenuItem) 
+	public void loadScreen(Long pMenuItem) 
 			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 		
 		if (ctx.numberView() > 0) ctx.deleteAllView();
