@@ -81,6 +81,7 @@ public class PFDialog implements Serializable {
 		dialog.setDraggable(true);
 		dialog.setMinWidth(300);
 		dialog.setClosable(true);
+		dialog.setModal(true);
 			
 		dialog.getChildren().add(pfTable.dataTable01(lstbase));
 		
