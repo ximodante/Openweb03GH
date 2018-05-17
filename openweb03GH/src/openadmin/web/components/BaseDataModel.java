@@ -2,7 +2,9 @@ package openadmin.web.components;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.ListDataModel;
 
 import org.primefaces.model.SelectableDataModel;
@@ -10,7 +12,6 @@ import org.primefaces.model.SelectableDataModel;
 import openadmin.model.Base;
 
 public class BaseDataModel  extends ListDataModel<Base> implements SelectableDataModel<Base>, Serializable {
-
 
 		private static final long serialVersionUID = 14051803L;
 		
@@ -36,6 +37,10 @@ public class BaseDataModel  extends ListDataModel<Base> implements SelectableDat
 	            if(pBase.getDescription().equals(pDescription)) {
 	            	
 	            	System.out.println("Base model select: " + pBase.getDescription());
+	            	
+	            	Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+	            	
+	            	sessionMap.put("idBase", pBase);
 	            	
 	                return pBase; 
 	            	

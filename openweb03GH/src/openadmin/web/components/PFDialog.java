@@ -89,7 +89,7 @@ public class PFDialog implements Serializable {
 		
 		
 		AjaxBehavior ajaxBehavior = new AjaxBehavior();
-		ajaxBehavior.setUpdate("form1");
+		ajaxBehavior.setUpdate("form1:idContingut");
 		ajaxBehavior.setProcess("@this");
 		ajaxBehavior.addAjaxBehaviorListener(new AjaxBehaviorListenerImpl(me,null));
 		dialog.addClientBehavior("close", ajaxBehavior);

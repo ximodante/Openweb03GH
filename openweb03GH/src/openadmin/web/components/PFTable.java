@@ -81,6 +81,7 @@ public class PFTable implements Serializable {
 				//add component to column
 				//If is String	
 				if (f.getType().getSimpleName().endsWith("String") || 
+					f.getType().getSimpleName().endsWith("Long") ||
 					f.getType().getSimpleName().endsWith("Integer") ||			
 					f.getType().getSimpleName().endsWith("Date")    ||
 					f.getType().getSimpleName().endsWith("Short")) {	
@@ -108,27 +109,24 @@ public class PFTable implements Serializable {
 				
 				}
 				
-				
-				//MethodExpression me = _context.getApplication().getExpressionFactory().createMethodExpression(_context.getELContext(),
-				//	     "#{ctx.getView(ctx.numberView()).selectRow()}", String.class, new Class[0]);
-				
-				
 				//add column to data table
 				table.getChildren().add(column);
 				
 		}
 		
 		MethodExpression meArg = _context.getApplication().getExpressionFactory().createMethodExpression(_context.getELContext(),
-				"#{ctx.getView(ctx.numberView()).setBase(pbase)}", null, new Class<?>[]{});
+				"#{ctx.getView(ctx.numberView()).setBase(pbase)}", null ,new Class<?>[]{Base.class});
 		
 		MethodExpression me = _context.getApplication().getExpressionFactory().createMethodExpression(_context.getELContext(), 
 				"#{ctx.getView(ctx.numberView()).selectRow()}", void.class, new Class<?>[]{SelectEvent.class});
 		
+		 MethodExpression me2 = _context.getApplication().getExpressionFactory().createMethodExpression(_context.getELContext(),
+			     "#{ctx.getView(ctx.numberView()).selectRow}", String.class, new Class[]{});
 		
 		AjaxBehavior ajaxBehavior = new AjaxBehavior();
-		ajaxBehavior.setUpdate("form1");
+		ajaxBehavior.setUpdate("form1:idContingut");
 		ajaxBehavior.setProcess("@this");
-		ajaxBehavior.addAjaxBehaviorListener(new AjaxBehaviorListenerImpl(me,null));
+		ajaxBehavior.addAjaxBehaviorListener(new AjaxBehaviorListenerImpl(me2,null));
 		table.addClientBehavior("rowSelect", ajaxBehavior);
 		
 		return table;
