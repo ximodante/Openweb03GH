@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.Setter;
 import openadmin.action.ContextAction;
 import openadmin.model.control.User;
-import openadmin.util.lang.LangType;
 import openadmin.util.lang.WebMessages;
 
 @Named

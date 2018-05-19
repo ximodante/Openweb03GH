@@ -456,9 +456,9 @@ public class ReflectionField {
 		
 		for (Method me: objCopy.getClass().getDeclaredMethods()){
 			
-			System.out.println(basePaste.getClass().getSimpleName() + " --  " + me.getName());
-			
-			if (("get" + basePaste.getClass().getSimpleName()).equals(me.getName())){																																			
+			if (null ==  basePaste) return null;
+
+			else if (("get" + basePaste.getClass().getSimpleName()).equals(me.getName())){																																			
 					
 			try {
 				
@@ -476,7 +476,7 @@ public class ReflectionField {
 						
 					e.printStackTrace();
 			}																	
-		}		
+			}		
 	}	
 		
 		return basePaste;

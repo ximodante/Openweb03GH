@@ -84,7 +84,7 @@ public class MainScreen implements Serializable {
  	 * @return Menubar
  	 */		
 	public MenuModel  getMenuBar() {
-		
+				
 		menuBar = new DefaultMenuModel();
 		
 		PFMenuBar pfMenuBar = new PFMenuBar(lang);
@@ -113,29 +113,27 @@ public class MainScreen implements Serializable {
 			 menuBar.addElement(pfMenuBar.menuEntities("entities", entities));
 			 
 		 }
-		
+		 
 		//if there is an entity
 		 if (entities.size() == 1) {
 			
 			if (null == activeEntity)  activeEntity = entities.stream().findFirst().get();
 					
 			lstAccess = ctx.getMapEntityAccess().get(activeEntity);
-						
+			
+			//If there is an program
 			if (lstAccess.size() > 1) {
 				
 				Access vaccess = lstAccess.stream().findFirst().get();
 				
 				loadMenuItems(vaccess.getRole().getId(), vaccess.getProgram().getId());
 			
-			}
-			
-			//If there is an program
-			else menuBar.addElement(pfMenuBar.menuPrograms("programs", lstAccess));
+			} else menuBar.addElement(pfMenuBar.menuPrograms("programs", lstAccess));
 			 
 			
 			
 		 }
-		
+		 
 		menuBar.generateUniqueIds();
 		
 		return menuBar;
@@ -143,6 +141,8 @@ public class MainScreen implements Serializable {
 	}
 		
 	public void loadMenuItems(Long pRol, Long pProgram) {
+		
+		ctx.getConnControl().setUser(ctx.getUser());
 		
 		menuLateral = new DefaultMenuModel();
 		
@@ -152,7 +152,7 @@ public class MainScreen implements Serializable {
 		rol.setId(pRol);
 		
 		//activeRol = ctx.getConnControl().findObjectPK(rol);
-				
+		
 		//Current Rol
 		ctx.setActiveRol(ctx.getConnControl().findObjectPK(rol));
 		
@@ -218,32 +218,48 @@ public class MainScreen implements Serializable {
 	public void loadScreenRecursive(String pMenuItem) 
 			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 		
+
 		MenuItem menuItem = new MenuItem();
 		menuItem.setDescription(pMenuItem);
 		menuItem = ctx.getConnControl().findObjectDescription(menuItem);
 		
-		screen(menuItem, null);
+		//Objecte actual
+		Base _obj = ctx.getView(ctx.numberView()).getBase();
+		
+		//Objecte a crear
+		Base obj = (Base)ReflectionUtils.createObject(menuItem.getClassName().getDescription());
+		
+		System.out.println("Objecte origen: " + _obj);
+		System.out.println("Objecte desti: " + obj);
+		//Find object if is instance
+		if (null != _obj){
+						
+			obj = ReflectionField.copyObject2(_obj, (Base)obj);
+			
+		}
+		
+		
+		screen(menuItem, obj);
 	
 	}
 	
 	public void exitScreenRecursive() 
 			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
-		
+				
+	
 		Base _obj = ctx.getView(ctx.numberView()).getBase();
-		
+				
 		ReflectionField refl = new ReflectionField();
 		
-		refl.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView() - 1).getMetodo());
+		Base pObejectCopy = refl.copyObject(_obj, ctx.getView(ctx.numberView() - 1).getBase(), ctx.getView(ctx.numberView()).getMetodo());
 		
 		ctx.deleteView();
-		
-		//Object before screen
-		Base obj =  ctx.getView(ctx.numberView()).getBase();
 		
 		MenuItem menuItem = ctx.getView(ctx.numberView()).getMenuItem();
+		
 		ctx.deleteView();
 		
-		screen(menuItem, obj);
+		screen(menuItem, pObejectCopy);
 		
 	}
 	
@@ -273,6 +289,7 @@ public class MainScreen implements Serializable {
 		if (null == obj) {
 			
 			obj = ReflectionUtils.createObject(pMenuItem.getClassName().getDescription());
+			
 			
 		}
 		
