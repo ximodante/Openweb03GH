@@ -120,15 +120,17 @@ public class MainScreen implements Serializable {
 			if (null == activeEntity)  activeEntity = entities.stream().findFirst().get();
 					
 			lstAccess = ctx.getMapEntityAccess().get(activeEntity);
-			
-			//If there is an program
+						
 			if (lstAccess.size() > 1) {
 				
 				Access vaccess = lstAccess.stream().findFirst().get();
 				
 				loadMenuItems(vaccess.getRole().getId(), vaccess.getProgram().getId());
 			
-			} else menuBar.addElement(pfMenuBar.menuPrograms("programs", lstAccess));
+			}
+			
+			//If there is an program
+			else menuBar.addElement(pfMenuBar.menuPrograms("programs", lstAccess));
 			 
 			
 			
@@ -150,7 +152,7 @@ public class MainScreen implements Serializable {
 		rol.setId(pRol);
 		
 		//activeRol = ctx.getConnControl().findObjectPK(rol);
-		
+				
 		//Current Rol
 		ctx.setActiveRol(ctx.getConnControl().findObjectPK(rol));
 		

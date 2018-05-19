@@ -61,16 +61,8 @@ public class ContextAction implements Serializable {
 	//@Getter @Setter
 	//private DaoOperationFacade connDefault = null;
 	
-	/** Field that contain the menuItems*/
-	//private Map<String, List<Base>> menuItems = new HashMap<String, List<Base>>();
-	
-	/** Field that contain the actions of the view*/
-	//private Map<String, List<Base>> actionsViews = new HashMap<String, List<Base>>();
-	
 	@Getter @Setter
 	private Map<EntityAdm, List<Access>> mapEntityAccess = new HashMap<EntityAdm, List<Access>>();
-	
-	//private  List<EntityRole> lstEntitiRol = new ArrayList<EntityRole>();
 	
 	//private EntityAdm entityDefault = null;
 	
@@ -246,119 +238,6 @@ public class ContextAction implements Serializable {
 				.collect(Collectors.groupingBy(Access::getEntityAdm));
 		
 	}
-	
-	
-	/**
-	 * <desc> Load menu items for each application</desc>
-	  * @param pRole, role of application
-	  * @param entity, selected entity
-	 
-	private void loadMenuItems(Role pRole, EntityAdm entity) {
-		
-		/*****************************************************************
-		 * Find all items of menu for each entity, program and user, in the table ActionViewRole
-		 ***************************************************************
-		ActionViewRole actionViewRole = new ActionViewRole();
-		
-		actionViewRole.setRole(pRole);
-		
-		//Load of items menu with the key (id entity and id program)
-		menuItems.put("idi" + entity.getId() + "_" + pRole.getProgram().getId(), connControl.findObjects(actionViewRole));
-		
-		/*****************************************************************
-		 * Find all actions for each view and role, in the table ActionViewRole
-		 ***************************************************************
-		//List of menu items
-		Set<MenuItem> listMenuItem = new TreeSet<MenuItem>();
-		
-		for (Base b : connControl.findObjects(actionViewRole)) {
-			
-			actionViewRole = (ActionViewRole)b;
-			listMenuItem.add(actionViewRole.getMenuItem());
-			
-		}
-		
-		List<Base> lst = new ArrayList<Base>();
-		
-		lst.addAll(listMenuItem);
-		
-		for (MenuItem item: listMenuItem){
-			
-			actionViewRole = new ActionViewRole();
-			actionViewRole.setMenuItem(item);
-			actionViewRole.setRole(pRole);
-			
-			//actionsViews.put("ida" + item.getDescription() + "_" + pRole.getId(), connControl.findObjects(actionViewRole));
-			actionsViews.put("ida" + item.getDescription(), connControl.findObjects(actionViewRole));
-			//System.out.println("CARREGA" + "ida" + item.getDescription());
-		}
-			
-	}
-	
-	/**
-	public List<EntityRole> getPrograms() {
-		return programs;
-	}
-	
-	public List<Base> getLoadMenuItems(String pKey){
-		
-		
-		return menuItems.get(pKey);
-
-	} 
-	*/
-	/**
-	  * <desc> /Loads all actions of the view</desc>
-	  * @param pKey, id view and id role
-	  * @return List the actions
-	  
-	public List<Base> getLoadActionsView(String pKey){
-
-		
-		return actionsViews.get(pKey);
-		
-	}
-
-	
-	/**-----------------------------------------------------
-	 * ---------------- gets i sets --------------------
-	 * -----------------------------------------------------
-	 */
-
-	/**
-	public List<EntityAdm> getListEntity() {
-		
-		List<EntityAdm> lst = new ArrayList<EntityAdm>();
-		
-		for (EntityAdm b : listEntity) {
-			
-			lst.add(b);
-			
-		}
-		
-		return lst;
-	}
-
-	public EntityAdm getEntityDefault() {
-		return entityDefault;
-	}
-
-
-	public void setEntityDefault(EntityAdm entityDefault) {
-		this.entityDefault = entityDefault;
-	}
-
-
-	public Role getRolDefault() {
-		return rolDefault;
-	}
-
-
-	public void setRolDefault(Role rolDefault) {
-		this.rolDefault = rolDefault;
-	}
-
-	*/
 	
 	//Work view
 	public ViewFacade getView(Integer key) {

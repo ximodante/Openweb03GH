@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.el.MethodExpression;
 import javax.faces.component.UIOutput;
 import javax.faces.component.html.HtmlOutputText;
@@ -18,7 +17,6 @@ import org.primefaces.event.SelectEvent;
 
 import openadmin.model.Base;
 import openadmin.util.lang.LangType;
-import javax.faces.model.ArrayDataModel;
 
 public class PFTable implements Serializable {
 	

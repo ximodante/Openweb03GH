@@ -417,7 +417,10 @@ public class ReflectionField {
 	
 	public static Base copyObject(Base objCopy, Base basePaste, String metodo){		
 		
+		
 		for (Method me: basePaste.getClass().getDeclaredMethods()){
+			
+			//System.out.println("metodes objecte: " + me.getName() );
 			
 			if (("set" + metodo).equals(me.getName())){	
 					
@@ -445,6 +448,7 @@ public class ReflectionField {
 				
 		}	
 		
+		System.out.println("Resultat Objecte copiat: " + basePaste);
 		return basePaste;
 	}
 	
@@ -452,34 +456,28 @@ public class ReflectionField {
 		
 		for (Method me: objCopy.getClass().getDeclaredMethods()){
 			
-			//System.out.println(basePaste.getClass().getSimpleName() + " --  " + me.getName());
+			System.out.println(basePaste.getClass().getSimpleName() + " --  " + me.getName());
 			
 			if (("get" + basePaste.getClass().getSimpleName()).equals(me.getName())){																																			
 					
 			try {
-					
-				if (me.invoke(objCopy, (Object)null) != null){
-					
-					basePaste = (Base) me.invoke(objCopy, (Object)null);
-					
-				}
-										
-				continue;
-					
-				} catch (IllegalArgumentException e) {
-						
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-						
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-						
-					e.printStackTrace();
-				}
-																			
-			}
 				
-		}	
+				basePaste = (Base) me.invoke(objCopy, null);
+				
+				if (basePaste != null) return basePaste;
+										
+			} catch (IllegalArgumentException e) {
+						
+					e.printStackTrace();
+			} catch (IllegalAccessException e) {
+						
+					e.printStackTrace();
+			} catch (InvocationTargetException e) {
+						
+					e.printStackTrace();
+			}																	
+		}		
+	}	
 		
 		return basePaste;
 	}

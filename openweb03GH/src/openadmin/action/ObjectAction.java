@@ -160,7 +160,6 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 			UtilFaces.removeComponentOfId(component, pDialog);
 		}
 		
-		
 	}
 	
 	public void selectRow(SelectEvent event) {
@@ -178,8 +177,10 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		sessionMap.remove("idBase");
 		
 		objOriginal = SerialClone.clone(pBaseMap);
+		
+		ctx.getView(ctx.numberView()).setBase(objOriginal);
 
-		this.base =  pBaseMap;
+		//this.base =  pBaseMap;
 		
 	}
 	
@@ -189,6 +190,8 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		
 		objOriginal = SerialClone.clone(pBase);
 
+		metodo = pBase.getClass().getSimpleName().substring(0, 1).toUpperCase() +  pBase.getClass().getSimpleName().substring(1);
+		
 		this.base =  pBase;
 	
 	} 

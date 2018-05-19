@@ -85,7 +85,7 @@ public class Access extends Audit implements Base, java.io.Serializable {
 
 	public void setDescription(String pDescription) {
 		
-		if(getEntityAdm() != null || getUser() != null || getProgram() != null)
+		if(getEntityAdm() != null && getUser() != null && getProgram() != null)
 			this.description = getProgram().getId() + "_" + getUser().getId() + "_" + getEntityAdm().getId();
 	}
 	
