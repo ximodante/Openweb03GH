@@ -60,6 +60,7 @@ public class User extends Audit implements Base, java.io.Serializable {
 	 */
 	@NotNull
 	@Column(name = "clau", length=50)
+	@Size(max = 50)
 	@Getter
 	private String password;
 	

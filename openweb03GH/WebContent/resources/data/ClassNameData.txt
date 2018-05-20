@@ -13,7 +13,7 @@ openadmin.model.control.MenuItem
 openadmin.model.control.Program
 openadmin.model.control.Role
 openadmin.model.control.User
-openadmin.util.firstcontrolload.FirstControlLoad
+openadmin.util.configuration.FirstControlLoad
 #------------------+---------------------------------------------------------
 #Description  MODEL CONFIGURACION            |
 #---------------------------------------+

@@ -14,6 +14,7 @@ import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -111,8 +112,9 @@ public class ContextAction implements Serializable {
 	
 	/**<desc> Performs the application login</desc>
  	 * @return true if login user is correct
+	 * @throws NoSuchAlgorithmException 
 	 */
-	public boolean login (User pUser) {
+	public boolean login (User pUser) throws NoSuchAlgorithmException {
 		
 		//Usuari que es connecta
 		user = pUser;
@@ -134,7 +136,7 @@ public class ContextAction implements Serializable {
 			//if (connControl.isEmpty(user)) FirstControlLoadEdu.PersistConfiguration();
 			else if (connControl.isEmpty(User.class)) new FirstControlLoad().dataLoad();
 			
-		} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | IntrospectionException | RuntimeException e) {
+		} catch (IOException | RuntimeException e) {
 			
 			e.printStackTrace();
 		

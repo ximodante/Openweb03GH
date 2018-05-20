@@ -1,40 +1,27 @@
 package openadmin.web.components;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.el.MethodExpression;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIOutput;
-import javax.faces.component.html.HtmlOutputText;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.behavior.ajax.AjaxBehavior;
 import org.primefaces.behavior.ajax.AjaxBehaviorListenerImpl;
 import org.primefaces.component.outputpanel.OutputPanel;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.component.column.Column;
-import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.dialog.Dialog;
 
-import org.primefaces.model.SelectableDataModel; 
-import javax.faces.model.ListDataModel;
-
 import openadmin.model.Base;
-import openadmin.util.faces.UtilFaces;
 import openadmin.util.lang.LangType;
 
 public class PFDialog implements Serializable {
 	
 	private static final long serialVersionUID = 14051801L;
-
-	private OutputPanel panelDialogo;	
 	
 	private LangType langType;
 	
@@ -73,11 +60,11 @@ public class PFDialog implements Serializable {
 		}
 				
 		dialog.setWidgetVar("widget");
-		dialog.setHeader("Carles");
+		//dialog.setHeader("Carles");
 		dialog.setVisible(true);
 		dialog.setMinimizable(true);
 		dialog.setDynamic(true);
-		dialog.setFooter("Alex");
+		//dialog.setFooter("Alex");
 		dialog.setDraggable(true);
 		dialog.setMinWidth(300);
 		dialog.setClosable(true);

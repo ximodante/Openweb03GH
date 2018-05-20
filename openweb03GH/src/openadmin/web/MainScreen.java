@@ -122,7 +122,7 @@ public class MainScreen implements Serializable {
 			lstAccess = ctx.getMapEntityAccess().get(activeEntity);
 			
 			//If there is an program
-			if (lstAccess.size() > 1) {
+			if (lstAccess.size() == 1) {
 				
 				Access vaccess = lstAccess.stream().findFirst().get();
 				
@@ -229,8 +229,6 @@ public class MainScreen implements Serializable {
 		//Objecte a crear
 		Base obj = (Base)ReflectionUtils.createObject(menuItem.getClassName().getDescription());
 		
-		System.out.println("Objecte origen: " + _obj);
-		System.out.println("Objecte desti: " + obj);
 		//Find object if is instance
 		if (null != _obj){
 						

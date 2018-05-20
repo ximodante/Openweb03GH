@@ -141,6 +141,7 @@ public class PFMenuBar implements Serializable{
 	public Menubar menuAccions(Integer view, List<Action> pLstAction){
 		
 		Menubar menuBar = new Menubar();
+		menuBar.setStyleClass("menubarTp1");
 		
 		MenuModel menuModel = new DefaultMenuModel();
 		
@@ -150,10 +151,26 @@ public class PFMenuBar implements Serializable{
 		
 		for (Action ac: pLstAction){
 			
+			if (ac.getDescription().indexOf(":") > 0){
+				
+				label = ac.getDescription().substring(ac.getDescription().indexOf(":")+1).trim();
+				item = new DefaultMenuItem(langType.msgActions(label));
+				item.setStyleClass("itemTp1");
+				item.setId("" + ac.getId());
+				item.setIcon("fa fa-fw " + ac.getIcon());
+				item.setCommand("#{ctx.getView("+ view + ").otherAction(\"" + label + "\")}");
+				item.setUpdate("form1:idContingut");
+				menuModel.addElement(item);
+				continue;
+			}
+			
+			
 			label = ac.getDescription().substring(ac.getDescription().indexOf("_")+1);
 			
 			item = new DefaultMenuItem(langType.msgActions(label)); 
+			item.setStyleClass("itemTp1");
 			item.setId("" + ac.getId());
+			item.setIcon("fa fa-fw " + ac.getIcon());
 			item.setCommand("#{ctx.getView(" + view + ")." + ac.getDescription().substring(ac.getDescription().indexOf("_")).trim() + "()}");
 			item.setUpdate("form1:idContingut");
 			menuModel.addElement(item);
@@ -163,14 +180,17 @@ public class PFMenuBar implements Serializable{
 		if (view > 1){
 			
 			item = new DefaultMenuItem(langType.msgActions("clean"));
+			item.setStyleClass("itemTp1");
 			item.setId("iditemclean");
+			item.setIcon("fa fa-fw fa-eraser");
 			item.setCommand("#{ctx.getView(" + view + ").clean}");
 			item.setUpdate("form1:idContingut");
 			menuModel.addElement(item);
 			
 			item = new DefaultMenuItem(langType.msgActions("exit"));
+			item.setStyleClass("itemTp1");
 			item.setId("iditemexit");
-			//item.setCommand("#{ctx.getView(" + view + ")._exit()}");
+			item.setIcon("fa fa-fw fa-external-link");
 			item.setCommand("#{main.exitScreenRecursive()}");
 			item.setUpdate("form1:idContingut");
 			menuModel.addElement(item);

@@ -125,6 +125,20 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		if (ctx.getConnControl().isResultOperation()) WebMessages.messageInfo("operation_delete_correct");
 	}
 	
+	public void otherAction(String pAction) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
+			
+		String pack = base.getClass().getPackage().getName();
+		int j=pack.lastIndexOf(".");
+		pack=pack.substring(j+1, pack.length());
+		Object objAction  = ReflectionUtils.createObject("openadmin.action." +
+   				pack + "." +
+   				base.getClass().getSimpleName() + "Action");
+   		
+		OtherActionFacada action = (OtherActionFacada) objAction;
+       	
+   		action.execute(pAction, base, ctx);
+	}
+	
 	public void _search() {
 		 		
  		List<Base> lstbaseNew = new ArrayList<Base>();
@@ -162,12 +176,6 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		
 	}
 	
-	public void selectRow(SelectEvent event) {
-		
-		System.out.println("Selecció fila: " + ((Base) event.getObject()).getId());
-		
-	}
-	
 	public void selectRow() {
 		
 		Map<String, Object> sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
@@ -195,5 +203,11 @@ public class ObjectAction implements Serializable, ObjectActionFacade{
 		this.base =  pBase;
 	
 	} 
+	
+	public void clean() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
+		
+		this.base = (Base) ReflectionUtils.createObject(this.base.getClass().getCanonicalName());
+	
+	}
 	
 }

@@ -1,352 +1,443 @@
 package openadmin.util.configuration;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.regex.Pattern;
 
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.jexl3.JexlBuilder;
-import org.apache.commons.jexl3.JexlContext;
-import org.apache.commons.jexl3.JexlEngine;
-import org.apache.commons.jexl3.JexlExpression;
-import org.apache.commons.jexl3.JxltEngine.Expression;
-import org.apache.commons.jexl3.MapContext;
-
+import javax.faces.context.FacesContext;
 import openadmin.dao.operation.DaoJpa;
 import openadmin.dao.operation.DaoOperationFacade;
 import openadmin.dao.operation.LogDao;
 import openadmin.dao.operation.LogOperationFacade;
-import openadmin.model.Base;
+
+import openadmin.model.control.Access;
+import openadmin.model.control.Action;
+import openadmin.model.control.ClassName;
+import openadmin.model.control.ActionViewRole;
+import openadmin.model.control.EntityAdm;
+import openadmin.model.control.Program;
+import openadmin.model.control.Role;
+import openadmin.util.SiNo;
 import openadmin.model.control.User;
-import openadmin.util.edu.ClassAndFields;
-import openadmin.util.edu.FileUtils;
-import openadmin.util.edu.PropertyUtils;
-import openadmin.util.edu.ReflectionUtils;
-import openadmin.util.edu.StringUtilsEdu;
+import openadmin.model.control.MenuItem;
+import openadmin.util.configuration.TypeLanguages;
 import openadmin.util.lang.LangType;
 
+/**
+ * To make the first load of the class, and maybe it can be useful
+ * for new updates
+ * @author edu
+ *
+ */
 public class FirstControlLoad {
-	private User firstLoadUser = new User("FirstLoader","123456","First Load User");
-	private DaoOperationFacade connectionLog = null;	
-	private LogOperationFacade log =null; 
-	private DaoOperationFacade connection = null; 	
 	
+	/** Name of the files to read */
+	private static final String path="/resources/data/";
 	
+	private static final String programDataFile="ProgramData.txt";
+	private static final String rolDataFile="RoleData.txt";
+	private static final String userDataFile="UserData.txt";
+	private static final String entityAdmDataFile="EntityAdmData.txt";
+	private static final String actionClassDataFile="ClassNameData.txt";
+	private static final String actionDataFile="MenuItemRoleActionData.txt";
+	private static final String actionRoleDataFile=actionDataFile;
+	private static final String viewDataFile="ViewRoleData.txt";
+	private static final String AccessDataFile="AccessData.txt";
 	
-	
-	//maven: private String PropertyPath = "properties/importcsv.properties";
-	private String PropertyPath = "./resources/properties/importcsv.properties";
-	
-	// Comment char
-	private String CommentString="#";
-	
-	
-	//maven: private String DataFolder = "data_config";
-	private String DataFolder="./resources/data";
-	
-	// csv delimiter in the file
-	private String FileDelimiter="\\|";
-	
-	// comma delimiter
-	private String commaDelimiter=",";
-			
-	//Apache Expressions parser
-	private JexlEngine jexlEngine = new JexlBuilder().create();
-	
-	// Create a context and add data
-	private Map<String, Object> baseJexlContext = new HashMap<String, Object>();
-    
-	
-	private Properties props =null;
-	
-	// if a line to read is good or not
-	private boolean isGoodLine(String line) {
-		line=line.trim();
-		return(!line.startsWith(CommentString) && line.length()>0);
-	}
-	
-	
-	//Get from property file the classes to be read from csv files
-	private  List<ClassAndFields> getConfigContent() throws FileNotFoundException, IOException{
-		List <ClassAndFields> myList= new ArrayList<ClassAndFields>();
-		
-		// number of classes or files to be loaded/populated and persisted
-		int NFiles=Integer.parseInt(props.getProperty("class_count"));
-		// Fill class properties
-		for (int i=1; i<=NFiles; i++) {
-			
-			String prefix="class." + String.format("%02d", i) + ".";
-			
-			//1. Read the class name 
-			String clssName=props.getProperty(prefix + "name");
-			
-			//2. Read the package name of the class
-			String pckgName=props.getProperty(prefix + "package");
-			
-			//3. Read the fields to read from the csv file
-			String fields=props.getProperty(prefix + "fields");
-			
-			//4. Read the expressions
-			String expressions=props.getProperty(prefix + "expressions",null);
-			
-			//5. Read group fields
-			String groupFields=props.getProperty(prefix + "groupFields",null);
-			
-			//6. Read group expressions
-			String groupExpressions=props.getProperty(prefix + "groupExpressions",null);
-			
-			//7. Read group begin
-			int groupBeginPos=Integer.parseInt(props.getProperty(prefix + "groupBeginPos","-1"));
-			
-			//8. Read group length
-			int groupLength=Integer.parseInt(props.getProperty(prefix + "groupLength","-1"));
-			
-			
-			//9. Read the file name 
-			String fileName=props.getProperty(prefix + "fileName",null);
-			
-			
-			myList.add(new ClassAndFields(clssName, pckgName, fields, expressions, groupFields, 
-					                          groupExpressions, groupBeginPos, groupLength, fileName )); 
-		}
-		return myList;
-	}
+	private static User firstLoadUser=new User("FirstLoader","123456","First Load User");
+	private static DaoOperationFacade connectionLog = null;	
+	private static LogOperationFacade log =null; 
+	private static DaoOperationFacade connection = null; 	
 	
 	/**
-	 * Read information from csv files and persists in the DB
-	 * @throws ClassNotFoundException
-	 * @throws IOException
-	 * @throws IntrospectionException 
-	 * @throws RuntimeException 
-	 * @throws NoSuchMethodException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
-	 */
-	
-	//public static void PersistConfiguration(EntityManagerFactory emf) throws ClassNotFoundException, IOException {
-	//public static void PersistConfiguration() 
-	public void dataLoad()
-			throws ClassNotFoundException, IOException, IntrospectionException, InstantiationException, 
-			IllegalAccessException, InvocationTargetException, NoSuchMethodException, RuntimeException {	
-		
-		LangType langType = new LangType();
-		langType.changeMessageLog(TypeLanguages.es);
-		
-		//maven: props =PropertyUtilsEdu.getProperties(FileUtilsEdu.getStreamFromResourcesFolder(PropertyPath));
-		props =PropertyUtils.getProperties(FileUtils.getStreamFromWebContentFolder(PropertyPath));
-		
-		
-		//1.0- Open connections
-		connectionLog = new DaoJpa(firstLoadUser, "log_post", null, langType);	
-		log = new LogDao(connectionLog, "control", langType);
-		connection = new DaoJpa(firstLoadUser, "control_post", log,langType);
-		
-		//baseJexlContext.put("jpa", connection );
-		baseJexlContext.put("integer", new Integer(1) );
-		baseJexlContext.put("localDate", LocalDate.now());
-		
-		//Assing data from properties
-		CommentString=props.getProperty("comment",CommentString);
-		DataFolder=props.getProperty("data_folder",DataFolder);
-		FileDelimiter=props.getProperty("delimiter",FileDelimiter);
-		
-		int i=0;
-		for (ClassAndFields cf: getConfigContent()) {
-			connection.begin();
-			populateClass(cf,i++);
-			connection.commit();	
-			i++;
-		}
-		
-		log.finalizeLog();
-		connection.finalize();
-		
-	}
-	/**
-	 * Populates only one class a a time
-	 * @param cf
-	 * @param i
-	 * @throws ClassNotFoundException
+	 * Read delimited data from a delimited file  
+	 * @param pFileName the name of the file
+	 * @param pDelimiter  The delimiter of the data
+	 * @return 
 	 * @throws FileNotFoundException
 	 * @throws IOException
-	 * @throws IntrospectionException
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchMethodException
-	 * @throws RuntimeException
 	 */
-	private void  populateClass(ClassAndFields cf, int i) 
-			throws ClassNotFoundException, FileNotFoundException, IOException, IntrospectionException, 
-			InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, 
-			RuntimeException {
+	private static List<String[]> ReadData(String pFileName, String pDelimiter) throws FileNotFoundException, IOException{
 		
-		String myClassName=cf.getName();
-		String MyFullClassName=cf.getPackageName() + "." + myClassName;
-		//Class<? extends Base> myClass = (Class<? extends Base>) Class.forName(MyFullClassName);
-		Class<?> myClass = Class.forName(MyFullClassName);
-		String myReadFields=cf.getReadFields();
-		String myExpressions=cf.getExpressions();
-		String myGroupFields=cf.getGroupFields();
-		String myGroupExpressions=cf.getGroupExpressions();
-		int groupBeginPos=cf.getGroupBeginPos();
-		int groupLenght=cf.getGroupLength();
+		InputStream in = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(pFileName);
 		
-		String fileName= DataFolder + "/";
-		if (cf.getFileName()==null) fileName=fileName+ myClassName + "Data.txt";
-		else fileName=fileName+ cf.getFileName();
+		BufferedReader inputStream = new BufferedReader(new InputStreamReader(in));
 		
-		System.out.println();
-		System.out.println("---------------------------------------------------------------------------------------------------------");
-		System.out.println(i + ". Pesisting " + myClassName + " from " + fileName);
-		System.out.println("---------------------------------------------------------------------------------------------------------");
+		Pattern p = Pattern.compile(pDelimiter);
+		List<String[]> lst=new ArrayList<String[]>();
+		while(true) {
+			String strLine= inputStream.readLine();	  		// Input a line from the file
+			if (strLine == null) break;  			 		// We have reached eof
+			System.out.println(strLine);
+			strLine=strLine.trim();
+			if (strLine.length()>1) if (strLine.charAt(0)!='#')lst.add(p.split(strLine)); // Split the line into strings delimited by delimiters
+		}
 		
-		PropertyDescriptor[] propsDesc=ReflectionUtils.getPropertiesDescriptor(myClass);
-		// Use default variables
-		JexlContext context = new MapContext(baseJexlContext);
-				
-		// maven: fileName=FileUtilsEdu.getPathFromResourcesFolder(fileName);
-		fileName=FileUtils.getPathFromWebContentFolder(fileName);
+		return lst;
+	} 
+	
+	/**
+	 * Gets the Program records from a file and persist them in the database
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws DataException
+	 */
+	private static void programDef() throws FileNotFoundException, IOException {
+		int i=1;
 		
-		for (String s[]: FileUtils.ReadData(fileName, FileDelimiter, CommentString)){
-			List<Base> myList=
-				readBean(myClass, propsDesc, context, myReadFields, myExpressions, 
-						myGroupFields, myGroupExpressions, groupBeginPos, groupLenght, s);
-			for(Base obj: myList)
-				myPersist(obj);
+		for (String[] s: ReadData(path + programDataFile,"\\|")) {
+			
+			Program program=new Program(s[0].trim());
+			program.setIcon(s[1].trim());
+			//System.out.println(s[0]+"-->PROGRAM:"+program.getDescription()+" "+program.getDebugLog());
+			
+			if (connection.findObjectDescription(program) == null){
+				connection.persistObject(program);
+				System.out.println(i+".- Programa: " + s[0]+ " donat d'alta");	
+			}
+			i++;
 		}
 	}
 	
-	private <T extends Base> List<T> readBean (Class<?> pClass, PropertyDescriptor[] propsDesc, 
-			JexlContext context, String myReadFields, String myExpressions, String myGroupFields, String myGroupExpressions,
-			int groupBeginPos,	int groupLenght, String[] values) 
-			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, 
-			       ClassNotFoundException, RuntimeException, IntrospectionException {
+	/**
+	 * Gets the Role records from a file and persist them in the database
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws DataException
+	 */
+	private static void RolDef() throws FileNotFoundException, IOException {
+		int i=1;
 		
-		List<T> myList=new ArrayList<T>();
-		
-		
-		String[] fields=StringUtilsEdu.splitAndTrim(myReadFields,commaDelimiter);
-		String[] expressions=null;
-		Object[] objs=values;
-		
-		 
-		// If there are expressions, should be evaluated
-		if (myExpressions!=null) {
-			expressions=StringUtilsEdu.splitAndTrim(myExpressions,commaDelimiter);
-			context.set("value", values);
-			objs=new Object[expressions.length];
-			int i=0;
-			for (String expression: expressions) {
-				JexlExpression expr=jexlEngine.createExpression(expression);
-				objs[i++]=expr.evaluate(context);
-				//System.out.println("objs[" + (i-1) + "].class=" + objs[i-1].getClass() + "=" + objs[i-1].toString());
+		for (String[] s: ReadData(path + rolDataFile,"\\|")) {
+			
+			Role role=new Role();
+			role.setDescription(s[0].trim());
+			
+			System.out.println(s[0]+"-->ROLE:"+role.getDescription());
+			
+			if (connection.findObjectDescription(role) == null){
+				connection.persistObject(role);
+				System.out.println(i+".- Role: " + s[0]+ " donat d'alta");	
 			}
+			i++;
 		}
-		// See if there are groups
-		String[] groupFields=null;
-		String[] groupExpressions=null;
-		boolean isGroup=false;
-		if (myGroupFields!=null && groupBeginPos>=0) {
-			groupFields=StringUtilsEdu.splitAndTrim(myGroupFields,commaDelimiter);
-			groupExpressions=StringUtilsEdu.splitAndTrim(myGroupExpressions,commaDelimiter);
-			if (groupFields.length>0) isGroup=true;
+	}
+	
+	/**
+	 * Gets the User records from a file and persist them in the database
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws DataException
+	 */
+	private static void UserDef() throws FileNotFoundException, IOException {
+		int i=1;
+		LocalDate data = LocalDate.now();;
+		
+		SiNo sino = new SiNo();
+		sino.setDescription("NO");
+		SiNo sinoresult = (SiNo) connection.findObjectDescription(sino);
+		
+		if (sinoresult == null){
+			
+			connection.persistObject(sino);
+			
+		} else {
+			
+			sino = sinoresult;
 		}
 		
-		if (isGroup) {
-			// Extract groups
-			List<String[]> lstGroup=StringUtilsEdu.extractGroups(values, groupBeginPos, groupLenght);
-			for(String[] gValues: lstGroup) {
-				if (gValues[0].trim().length()>0) {
-					// create an object for each group
-					T myBean=(T)ReflectionUtils.createObject(pClass);
-					context.set("gValue", gValues);
-					int i=0;
-					for (String gField: groupFields) {
-						JexlExpression expr=jexlEngine.createExpression(groupExpressions[i]);
-						Object obj=expr.evaluate(context);
-						setProperty(myBean,gField,obj, propsDesc);
-						i++;
-					} 
-					int j=0;
-					for(String fld:fields) setProperty(myBean,fld,objs[j++], propsDesc);
-					myList.add(myBean);   
+		for (String[] s: ReadData(path + userDataFile,"\\|")) {
+			
+			User user=new User(s[0].trim(), s[1].trim(),s[2].trim());
+			user.setDateBegin(data);   user.setLanguage(s[3].trim());  user.setIdentifier(s[4].trim());
+			user.setActive(true)   ;
+			
+			System.out.println(s[0]+"-->USER:"+user.getDescription()+"--"+user.getPassword()+ "--" + user.getFullName() + "--" + user.getIdentifier() + "--" + user.getLanguage());
+			
+			if (connection.findObjectDescription(user) == null){
+				connection.persistObject(user);
+				System.out.println(i+".- Usuari: " + s[0]+ " donat d'alta");	
+			}
+			i++;
+		}
+	}
+	
+	/**
+	 * Gets the EntityAdm records from a file and persist them in the database
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws DataException
+	 */
+	private static void EntityAdmDef() throws FileNotFoundException, IOException {
+		int i=1;
+		
+		for (String[] s: ReadData(path + entityAdmDataFile,"\\|")) {
+			
+			EntityAdm entity=new EntityAdm(s[0].trim());
+			entity.setIcon(s[1].trim());
+			entity.setConn(s[2].trim());
+			
+			System.out.println(s[0]+"-->ENTITY ADM:"+entity.getDescription());
+			
+			if (connection.findObjectDescription(entity) == null){
+				connection.persistObject(entity);
+				System.out.println(i+".- Entitat: " + s[0]+ " donat d'alta");	
+			}
+			i++;
+		}
+	}
+	
+	/**
+	 * Gets the Actionclass records from a file and persist them in the database
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws DataException
+	 */
+	private static void ActionClassDef() throws FileNotFoundException, IOException {
+		int i=1;
+		
+		for (String[] s: ReadData(path + actionClassDataFile,"\\|")) {
+			
+			ClassName aClass=new ClassName(s[0].trim());
+			 
+			
+			System.out.println(s[0]+"-->ACTION CLASS:"+aClass.getDescription());
+			
+			if (connection.findObjectDescription(aClass) == null){
+				connection.persistObject(aClass);
+				System.out.println(i+".- Classe amb accions: " + s[0]+ " donat d'alta");	
+			}
+			i++;
+		}
+	}
+
+	/**
+	 * Gets the Action records from a file and persist them in the database
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws DataException
+	 */
+	private static void ActionDef() throws FileNotFoundException, IOException {
+		int i=1;
+		
+		for (String[] s: ReadData(path + actionDataFile,"\\|")) {
+			// Description is made of class.MainAction by example:User.New 
+			Action action=new Action(); 
+			action.setClassName((ClassName) connection.findObjectDescription(new ClassName(s[1].trim())));
+			action.setDescription(s[1].trim() + "_" + s[0].trim());
+			action.setIcon(s[2].trim());
+			action.setGrup(Integer.parseInt(s[3].trim()));
+			System.out.println(s[1].trim()+"."+s[0].trim());
+			System.out.println(s[0]+"-->ACTION:"+action.getDescription()+" ->"+action.getClassName().getDescription());
+			
+			if (connection.findObjectDescription(action) == null){
+				connection.persistObject(action);
+				System.out.println(i+".- Action: " + s[0]+ " donat d'alta");	
+			}
+			i++;
+		}
+	}
+	
+	/**
+	 * Gets the View records from a file and persist them in the database
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws DataException
+	 */
+	private static void menuItemDef() throws FileNotFoundException, IOException {
+		int i=1;
+		
+		MenuItem menuItemPare = null;
+		
+		for (String[] s: ReadData(path + viewDataFile,"\\|")) {
+			
+			MenuItem menuItem=new MenuItem();
+			menuItem.setClassName((ClassName) connection.findObjectDescription(new ClassName(s[1].trim())));
+			menuItem.setDescription(s[1].trim() + "_" + s[0].trim());
+			menuItem.setIcon(s[2].trim());
+			menuItem.setTypeNode((s[3].trim()));
+			menuItem.setViewType(s[4].trim());
+			menuItem.setOrden(Integer.parseInt(s[5].trim()));
+			
+			if (menuItem.getTypeNode().equals("p")){
+				
+				menuItemPare = new MenuItem();
+				
+				menuItemPare = menuItem;
+				
+			} else {
+				
+				menuItem.setParent(menuItemPare);
+			}
+			
+			System.out.println(s[0]+"-->Menuitem:"+menuItem.getDescription()+" ->"+menuItem.getClassName().getDescription());
+			
+			if (connection.findObjectDescription(menuItem) == null){
+				connection.persistObject(menuItem);
+				System.out.println(i+".- Menuitem: " + s[0]+ " donat d'alta");	
+			}
+			i++;
+		}
+	}
+	
+	/**
+	 * Gets the Access records from a file and persist them in the database
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws DataException
+	 */
+	private static void AccessDef() throws FileNotFoundException, IOException {
+		int i=1;
+		
+		for (String[] s: ReadData(path + AccessDataFile,"\\|")) {
+			// To simplify we have included in the table all available roles. So we should see all roles 
+			for (int j=0; j<10; j++){
+				int iRole=2*(j+1);
+				int iProgram=2*(j+1)+1;
+				if (s[iRole].trim().length()>1 && s[iProgram].trim().length()>1) {
+					// Description is made of id EntityAdm + "_" + id user + "_" id role
+					Access access=new Access(); 
+					access.setUser((User) connection.findObjectDescription(new User     (s[1].trim()," "," ")));	
+				
+					Program program = (Program) connection.findObjectDescription(new Program(s[iProgram].trim()));
+					
+					System.out.println("Id Role: " +program.getId());				
+					access.setProgram(program);
+					
+					Role role = (Role) connection.findObjectDescription(new Role(s[iRole].trim()));
+										
+					System.out.println("Id Role: " +role.getId());				
+					access.setRole(role);
+					
+					access.setEntityAdm((EntityAdm) connection.findObjectDescription(new EntityAdm(s[0].trim())));	
+					access.setDescription("");
+					
+					System.out.println(s[0]+"-->ACCESS:"+access.getDescription());
+							
+					if (connection.findObjectDescription(access) == null){
+						connection.persistObject(access);
+						System.out.println(i+".- Access: " + access.getDescription()+ " donat d'alta");	
+					}
+					i++;
 				}
 			}
-		// if not group
-		} else {
-			T myBean=(T)ReflectionUtils.createObject(pClass);
-			int j=0;
-			for(String fld:fields) setProperty(myBean,fld,objs[j++], propsDesc);
-			myList.add(myBean);
 		}
-		
-		return myList;
-		
 	}
 	
-	private void setProperty(Object oBean, String fieldName, Object fieldValue, PropertyDescriptor[] propsDesc) 
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, RuntimeException,
-			       IntrospectionException, InstantiationException, ClassNotFoundException {
+	/**
+	 * Gets the ActionRole records from a file and persist them in the database
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws DataException
+	 */
+	private static void menuItemRoleActionDef() throws FileNotFoundException, IOException{
+		int i=1;
 		
-		PropertyDescriptor propDesc=ReflectionUtils.getPropertyDescriptor(propsDesc, fieldName);
-		Class klass=propDesc.getPropertyType();
+		for (String[] s: ReadData(path + actionRoleDataFile,"\\|")) {
+			// To simplify we have included in the table all available roles. So we should see all roles 
+			for (int j=1; j<10; j++){
+				int iRole=2*(j+1)+1;
+				if (s[iRole].trim().length()>1) {
+					// Description is made of role.class.action by example:ADMIN.User.New
+					ActionViewRole actionViewRole = new ActionViewRole();
+					
+					MenuItem menuItem = new MenuItem();
+					menuItem.setDescription(s[1].trim()+"_"+s[4].trim());
+					
+					Action action = new Action();
+					action.setDescription(s[1].trim()+"_"+s[0].trim());
+					
+					Role role = new Role();
+					role.setDescription(s[iRole].trim());
+					
+					actionViewRole.setMenuItem((MenuItem) connection.findObjectDescription(menuItem));
+					actionViewRole.setAction((Action) connection.findObjectDescription(action));
+					actionViewRole.setRole((Role) connection.findObjectDescription(role));
+					
+					System.out.println(actionViewRole.getMenuItem() + " - " + actionViewRole.getAction() + " - " + actionViewRole.getRole());
+					
+					actionViewRole.setDescription("");
+							
+					System.out.println(s[0]+"-->ACTION ROLE:"+actionViewRole.getDescription());
+							
+					if (connection.findObjectDescription(actionViewRole) == null){
+						connection.persistObject(actionViewRole);
+						System.out.println(i+".- Action View Role: " + s[0]+ " donat d'alta");	
+					}
+					i++;
+				}
+			}
+		}
+	}
+	
+	public void dataLoad() throws NoSuchAlgorithmException, IOException {
 		
-		//System.out.println("fieldValue=" + fieldValue.getClass()+" = "+ fieldValue.toString());
-		String myValue=fieldValue.toString().trim();
-		Object myFieldValue=fieldValue;
+		LangType langType = new LangType();
 		
-		//System.out.println(fieldName + "-_>" + myValue + " ----" + propDesc.getName() );
-		if (Base.class.isAssignableFrom(klass)) {
+		langType.changeMessageLog(TypeLanguages.es);
+		
+		//1.0- Open connections
+		connectionLog = new DaoJpa(firstLoadUser, "log_post", null, langType);
+		log = new LogDao(connectionLog, "control", langType);
+		connection = new DaoJpa(firstLoadUser, "control_post", log, langType);
+		
+		connection.begin();		//2.1.-	Begin transaction  
+		programDef();		  	//2.2- 	Load and persist program definitions
+		connection.commit(); 	//2.3-	Commit connection
+		if (connection.isResultOperation()) System.out.println("1.-NEW PROGRAMS SAVED -----------------------");
+		
+		connection.begin();		//3.1.-	Begin transaction  
+		RolDef();			  	//3.- 	Load and persist role    definitions
+		connection.commit(); 	//3.3-	Commit connection
+		if (connection.isResultOperation()) System.out.println("2.-NEW ROLES SAVED -----------------------");
+		
+		connection.begin();		//4.1.-	Begin transaction  
+		UserDef();				//4.2-  Load and persist user    definitions
+		connection.commit(); 	//4.3-	Commit connection
+		if (connection.isResultOperation()) System.out.println("3.-NEW USERS SAVED -----------------------");
+		
+		connection.begin();		//5.1.-	Begin transaction  
+		EntityAdmDef();			//5.2-  Load and persist entity  definitions
+		connection.commit(); 	//5.3-	Commit connection
+		if (connection.isResultOperation()) System.out.println("4.-NEW ENTITIES SAVED -----------------------");
+		
+		connection.begin();		//6.1.-	Begin transaction  
+		ActionClassDef();		//6.2-  Load and persist action classes definitions
+		connection.commit(); 	//6.3-	Commit connection
+		if (connection.isResultOperation()) System.out.println("5.-NEW ACTION CLASSES SAVED -----------------------");
 			
-			myFieldValue=connection.findObjectDescription(
-					(Base)(ReflectionUtils.newObjectByDescription(klass,myValue)));
-								
-		} else if (klass.equals(String.class))	{
-			myFieldValue=myValue;
-		} else {
-			System.out.println("klass ->" + klass.getCanonicalName() );
-			if (myFieldValue.getClass().equals(String.class))
-				myFieldValue=ConvertUtils.convert(myFieldValue, klass);
+		connection.begin();		//7.1.-	Begin transaction  
+		ActionDef();			//7.2-  Load and persist action  definitions
+		connection.commit(); 	//7.3-	Commit connection
+		if (connection.isResultOperation()) System.out.println("6.-NEW ACTIONS SAVED -----------------------");
+		
+		connection.begin();		//9.1.-	Begin transaction  
+		menuItemDef();				//9.2-  Load and persist view    definitions
+		connection.commit(); 	//9.3-	Commit connection
+		if (connection.isResultOperation()) System.out.println("8.-NEW VIEWS SAVED -----------------------");
+		
+		connection.begin();		//11.1.- Begin transaction  
+		AccessDef();			//11.2-  Load and persist access      definitions
+		connection.commit(); 	//11.3-	 Commit connection
+		if (connection.isResultOperation()) System.out.println("9.-NEW ACCESS SAVED -----------------------");
+		
+		connection.begin();		//8.1.-	Begin transaction  
+		menuItemRoleActionDef();//8.2-  Load and persist action Role  definitions
+		connection.commit(); 	//8.3-	Commit connection
+		if (connection.isResultOperation()) System.out.println("10.-NEW ACTIONS AND VIEW SAVED -----------------------");
 				
-		}
-		//ReflectionUtilsEdu.setProperty(oBean, propsDesc, fieldName, myFieldValue);
-		//System.out.println(myFieldValue.getClass()+" = "+ myFieldValue.toString());
-		ReflectionUtils.setProperty(oBean, propDesc, myFieldValue);
-		//FieldUtils.writeField(fld, this.myBean, myFieldValue, true);
-		//System.out.println(oBean.toString());
-		
+		// Close log connection
+		log.finalizeLog();		//20.2.- close connections
+		connection.finalize();
+
 	}
-	 
-		
-	private <T extends Base> void myPersist(T obj) {
-		if (connection.findObjectDescription(obj) == null) {
-			System.out.println("Persisting..." + obj.toString());
-			connection.persistObject(obj);
-		}
-	}
-	
-	public static void main(String[] args) {
-		try {
-			//PersistConfiguration();
-			new FirstControlLoad().dataLoad();
-		} catch (ClassNotFoundException | IOException | InstantiationException 
-				| IllegalAccessException | InvocationTargetException | NoSuchMethodException 
-				| IntrospectionException | RuntimeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}	
+
 }
 

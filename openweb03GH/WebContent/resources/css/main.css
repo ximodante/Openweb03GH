@@ -117,14 +117,26 @@
 	text-align: right;
 }
 
-/**********************    Menu   ****************************************************/
+/**********************    Menu bar  ****************************************************/
 /****************************************************************************************/
+.menubarTp1 {
+
+	background-color: #f7ab08 !important;
+	margin-bottom: 1em !important;
+	width: fit-content !important;
+}
+
+.itemTp1 {
+
+	margin: 0.1em;
+
+}
 
 /**********************    JSF components   ****************************************************/
 /****************************************************************************************/
 .panelGridTp1{
 	
-	 padding-top: 25px;
+	 
 }
    
 
@@ -139,5 +151,18 @@
 /** menu */
 .ui-widget{
 	border: none;
-    background: none;
+	background: #ffffff;
+}
+
+.ui-menu .ui-menuitem .ui-state-hover{
+	border: none;
+	background: #ff8000;
+	color: white;
+}
+
+.ui-panelmenu .ui-menuitem .ui-state-hover{
+	border: none;
+	background: #ff8000;
+	color: white;
+	
 }

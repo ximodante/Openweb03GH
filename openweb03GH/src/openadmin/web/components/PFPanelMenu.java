@@ -53,8 +53,7 @@ public class PFPanelMenu implements Serializable {
 	 public DefaultMenuItem itemFill(MenuItem pMenuItem) {
 		 
 		 
-		 DefaultMenuItem item = new DefaultMenuItem(langType.msgGenerals(pMenuItem.getDescription())); 
-		 		 
+		 DefaultMenuItem item = new DefaultMenuItem(langType.msgGenerals(pMenuItem.getDescription())); 	 
 		 item.setIcon("ui-icon-newwin");
 		 item.setId("ida" + pMenuItem.getDescription());
 		 item.setCommand("#{main.loadScreen(" + pMenuItem.getId() + ")}");

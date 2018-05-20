@@ -1,6 +1,7 @@
 package openadmin.web;
 
 import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 
 import javax.enterprise.context.RequestScoped;
@@ -33,7 +34,7 @@ public class LoginAction implements Serializable{
 	
 	private String result;
 		
-	public String execute() {
+	public String execute() throws NoSuchAlgorithmException {
 			
 		result = "index";
 		

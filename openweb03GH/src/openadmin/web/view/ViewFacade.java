@@ -5,13 +5,9 @@ import java.util.List;
 
 import org.primefaces.component.outputpanel.OutputPanel;
 
-import openadmin.action.ContextAction;
 import openadmin.action.ObjectActionFacade;
 import openadmin.model.control.Action;
-import openadmin.model.control.MenuItem;
 import openadmin.util.lang.LangType;
-
-//import openadmin.action.ObjectActionFacade;
 
 public interface ViewFacade extends ObjectActionFacade {
 
