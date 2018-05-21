@@ -28,65 +28,6 @@ public class PFMenuBar implements Serializable{
 		langType = pLangType;
 	}
 	
-	/**
-	 * <desc>class that generates the generic menu</desc>
-	 * @author 			Alfred Oliver
-	 * @param head    	menu name 
-	 * @param lst  		list of items
-	 * @return        	HtmlDropDownMenu
-	 */
-	public static DefaultSubMenu subMenuSimple(String cap, List <String[]> lst){
-		
-		// El String te tres entrades valor, acció i icona
-		// Si el valor d'acció és 0 és un grup
-		//Per finalizar el grup l'acció val 1
-		
-		DefaultSubMenu subMenu = new DefaultSubMenu(cap);
-		DefaultSubMenu gr = null;
-		DefaultMenuItem item = null;
-		
-		for (String[] array: lst){
-			
-			//If only is item
-			if (!array[1].equals("0") && (gr == null)){
-				
-				item = new DefaultMenuItem(array[0]);
-				item.setIcon(array[2]);
-				item.setCommand(array[1]);
-				subMenu.addElement(item);
-			}
-			
-			// if is item of group
-			else if (!array[1].equals("1") && (gr != null)){
-				
-				item = new DefaultMenuItem(array[0]);
-				item.setIcon(array[2]);
-				item.setCommand(array[1]);
-				gr.addElement(item);			
-			}
-			
-			//Tancar grup submenu
-			else if (array[1].equals("1")){
-				
-				subMenu.addElement(gr);
-				gr = null;
-			}
-			
-			//create group
-			else if (array[1].equals("0")){
-				
-				gr = new DefaultSubMenu();
-				gr.setLabel(array[0]);
-				
-			} 
-			
-			
-		}
-		 
-		//System.out.println("submenu simple: " + cap);
-		return subMenu;
-	}
-	
 	public DefaultSubMenu menuEntities(String head, Set<EntityAdm> listEntities){
 		
 		DefaultSubMenu subMenu = new DefaultSubMenu(langType.msgGenerals(head));
@@ -97,7 +38,8 @@ public class PFMenuBar implements Serializable{
 			DefaultMenuItem item = new DefaultMenuItem(pValorItem); 
 			item.setIcon(enti.getIcon());
 			item.setId("" + enti.getId());
-			//item.setCommand("#{main.loadMenuItems(" + Integer.parseInt(item.getId()) + ",'"  + item.getValue() + "')}");
+			item.setCommand("#{main.selectActiveEntity(" + enti.getId() + ")}");
+			item.setUpdate("form1");
 		}
 		
 		
@@ -202,94 +144,4 @@ public class PFMenuBar implements Serializable{
 		return menuBar;
 		
 	}
-	
-	
-	/**
-	 * <desc>class that generates the applications submenu</desc>
-	 * @author 			Alfred Oliver
-	 * @param head    	submenu name 
-	 * @param listEp  	programs that the user is allowed for each entity
-	 * @return        	HtmlDropDownMenu
-	 
-	public static DefaultSubMenuOld subMenuAplicacions(String head, List<EntityRole> listEp, DatabaseConnection entity){
-		
-		DefaultSubMenu subMenu = new DefaultSubMenu(head);
-		
-		for (EntityRole er: listEp){
-			
-			 if (!er.getEntity().equals(entity)) continue; 
-			 
-			 for (Role ro: er.getRole()){
-				 
-				//Create menu item
-				DefaultMenuItem item = new DefaultMenuItem(MessagesTypes.msgGenerals(ro.getProgram().getDescription())); 
-				item.setIcon("ui-icon-newwin");
-				
-				//Id menu item (id entity and id program)
-				item.setId("idi" +er.getEntity().getId() + "_" + ro.getProgram().getId());
-				item.setCommand("#{principal.carregaMenuLateral('" + item.getId() + "','"  + item.getValue() + "')}");
-				item.setUpdate("frmplan1:idMenuLateral frmplan1:rutaPrograma");
-				
-				subMenu.addElement(item);
-				
-			 }
-			 
-			
-		}
-		
-		return subMenu;
-		
-	}*/
-	
-	/**
-	public static Toolbar menuAccions(Integer view, List<Action> actions){
-		
-		Application aplicacio = FacesContext.getCurrentInstance().getApplication();
-		
-		Toolbar toolBar = (Toolbar)aplicacio.createComponent(Toolbar.COMPONENT_TYPE);
-		
-		toolBar.setStyleClass("menuBarTipo1");
-		
-		ToolbarGroup grupAccions = (ToolbarGroup)aplicacio.createComponent(ToolbarGroup.COMPONENT_TYPE);
-		
-		for (Action ac: actions){	
-			
-			 CommandButton itemCmd = (CommandButton)aplicacio.createComponent(CommandButton.COMPONENT_TYPE);
-			 itemCmd.setIcon(ac.getIcon());
-			 itemCmd.setStyle("width: 100px; margin-right: 5px;");
-			//Other Actions
-			 
-			 /**
-			 if (ac.getDescription().substring(ac.getDescription().indexOf("_")).trim().equals("_search")){
-				 
-				 itemCmd.setOncomplete("PF('wdialogo01').show()");
-				 itemCmd.setUpdate("frmplan1:idContingut");
-			 }*/
-			
-	/**
-			if (ac.getDescription().indexOf(":") > 0){
-						
-
-				
-			} else {
-				
-				 itemCmd.setValue( MessagesTypes.msgOperation(ac.getDescription().substring(ac.getDescription().indexOf("_")+1).trim()));
-				 				 
-				 itemCmd.setActionExpression(aplicacio.getExpressionFactory().createMethodExpression
-							(FacesContext.getCurrentInstance().getELContext(), 
-								"#{ctx.getVista("+ view + ")." + ac.getDescription().substring(ac.getDescription().indexOf("_")).trim() +"}", String.class ,new Class[]{}));
-						
-				 System.out.println("accio: " + ac.getDescription());
-			}
-			 
-			 
-			 
-			 grupAccions.getChildren().add(itemCmd);
-		}
-		
-		
-		toolBar.getChildren().add(grupAccions);
-		
-		return toolBar;
-	}*/
 }

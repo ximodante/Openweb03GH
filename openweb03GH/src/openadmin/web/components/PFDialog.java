@@ -12,7 +12,6 @@ import javax.faces.context.FacesContext;
 import org.primefaces.PrimeFaces;
 import org.primefaces.behavior.ajax.AjaxBehavior;
 import org.primefaces.behavior.ajax.AjaxBehaviorListenerImpl;
-import org.primefaces.component.outputpanel.OutputPanel;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.component.dialog.Dialog;
 
@@ -64,7 +63,6 @@ public class PFDialog implements Serializable {
 		dialog.setVisible(true);
 		dialog.setMinimizable(true);
 		dialog.setDynamic(true);
-		//dialog.setFooter("Alex");
 		dialog.setDraggable(true);
 		dialog.setMinWidth(300);
 		dialog.setClosable(true);

@@ -44,10 +44,13 @@ public class PFTable implements Serializable {
 		table.setVar("pbase");
 		table.setSelectionMode("single");
 		table.setResizableColumns(true);
-		if (lstbase.size() > 10) table.setPaginator(true);
-		table.setDraggableColumns(true);
-		//table.setRowKey("#{pbase.description}");
-		//table.setSelection("#{ctx.getView(ctx.sizeView()).setBase(pbase)}");
+	
+		if (lstbase.size() > 10) {
+			
+			table.setPaginator(true);
+			table.setPaginatorPosition("bottom");
+		}
+		table.setDraggableColumns(true);		
 		
 		Base base = lstbase.get(0);
 		
@@ -56,7 +59,7 @@ public class PFTable implements Serializable {
 		table.getFacets().put("header", tableTitle);
 		
 		
-		Column column = (Column) _context.getApplication().createComponent(Column.COMPONENT_TYPE);
+		Column column;
 		
 		for (Field f: base.getClass().getDeclaredFields()){				
 			
@@ -133,6 +136,5 @@ public class PFTable implements Serializable {
 		return table;
 		
 	}
-	
 	
 }

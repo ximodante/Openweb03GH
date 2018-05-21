@@ -1,7 +1,5 @@
 package openadmin.action;
 
-import java.beans.IntrospectionException;
-
 /**
 *	Classe ContextAction
 *   <desc> class that represents the context of application</desc>
@@ -13,7 +11,6 @@ import java.beans.IntrospectionException;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
@@ -59,8 +56,8 @@ public class ContextAction implements Serializable {
 	private DaoOperationFacade connLog = null;
 	
 	/** Field that contain the connection with log*/
-	//@Getter @Setter
-	//private DaoOperationFacade connDefault = null;
+	@Getter @Setter
+	private DaoOperationFacade connDefault = null;
 	
 	@Getter @Setter
 	private Map<EntityAdm, List<Access>> mapEntityAccess = new HashMap<EntityAdm, List<Access>>();
@@ -147,6 +144,17 @@ public class ContextAction implements Serializable {
 	
 	}
 	
+	public void connEntityDefault(String pconn){
+		
+		//connection
+		if (connDefault != null){
+			
+			connDefault.finalize();
+		}
+		
+		connDefault = new DaoJpa(user, pconn, log, langType);
+		connDefault.setEnvironment(TypeEnvironment.WEB);
+	}
 	
 	
 	/**
