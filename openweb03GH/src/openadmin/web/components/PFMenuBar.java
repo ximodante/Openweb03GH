@@ -93,28 +93,21 @@ public class PFMenuBar implements Serializable{
 		
 		for (Action ac: pLstAction){
 			
-			if (ac.getDescription().indexOf(":") > 0){
+			label = ac.getDescription().substring(ac.getDescription().indexOf("_")+1);
+			item = new DefaultMenuItem(langType.msgActions(label));
+			item.setStyleClass("itemTp1");
+			item.setId("" + ac.getId());
+			item.setIcon("fa fa-fw " + ac.getIcon());
+			item.setUpdate("form1:idContingut");
+			
+			if (ac.getType() == 1){
 				
-				label = ac.getDescription().substring(ac.getDescription().indexOf(":")+1).trim();
-				item = new DefaultMenuItem(langType.msgActions(label));
-				item.setStyleClass("itemTp1");
-				item.setId("" + ac.getId());
-				item.setIcon("fa fa-fw " + ac.getIcon());
 				item.setCommand("#{ctx.getView("+ view + ").otherAction(\"" + label + "\")}");
-				item.setUpdate("form1:idContingut");
 				menuModel.addElement(item);
 				continue;
 			}
 			
-			
-			label = ac.getDescription().substring(ac.getDescription().indexOf("_")+1);
-			
-			item = new DefaultMenuItem(langType.msgActions(label)); 
-			item.setStyleClass("itemTp1");
-			item.setId("" + ac.getId());
-			item.setIcon("fa fa-fw " + ac.getIcon());
 			item.setCommand("#{ctx.getView(" + view + ")." + ac.getDescription().substring(ac.getDescription().indexOf("_")).trim() + "()}");
-			item.setUpdate("form1:idContingut");
 			menuModel.addElement(item);
 			
 		}
