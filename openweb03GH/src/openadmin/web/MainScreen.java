@@ -116,6 +116,7 @@ public class MainScreen implements Serializable {
 		getMenuBar();
 		
 		//Actualitzar el context
+		ctx.connEntityDefault(activeEntity.getConn());
 	}
 	
 	public void loadMenuItems(Long pRol, Long pProgram) {
@@ -270,7 +271,7 @@ public class MainScreen implements Serializable {
 		}
 		
 		//Default View
-		if (pMenuItem.getViewType().equals("default")) {
+		if (pMenuItem.getType() == 0) {
 					
 			Integer numberView = ctx.numberView()+1;
 			ViewFacade view = new DefaultView();

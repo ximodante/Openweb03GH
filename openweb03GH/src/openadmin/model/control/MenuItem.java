@@ -64,10 +64,10 @@ public class MenuItem extends Audit implements Base, Comparable<Base>, java.io.S
 	@Column(name="tipoNodo")
 	private String typeNode = "c";
 	
-	@Getter @Setter
-	@Size(max = 50)
-	@Column(name = "tipoVista")
-	private String viewType;
+	//@Getter @Setter
+	//@Size(max = 50)
+	//@Column(name = "tipoVista")
+	//private String viewType;
 	
 	@Getter @Setter
 	@Size(max = 50)
@@ -83,6 +83,11 @@ public class MenuItem extends Audit implements Base, Comparable<Base>, java.io.S
 	@Getter @Setter
 	@Column(name="ordreItem")
 	private Integer orden;
+	
+	// 0: command - 1: viewDafault
+	@Getter @Setter
+	@Column(name="tipus")
+	private byte type = 0;
 
 	public void setDescription(String pDescription) {
 				
