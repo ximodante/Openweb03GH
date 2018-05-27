@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import openadmin.annotations.NoSql;
 import openadmin.model.Audit;
@@ -64,11 +63,6 @@ public class MenuItem extends Audit implements Base, Comparable<Base>, java.io.S
 	@Column(name="tipoNodo")
 	private String typeNode = "c";
 	
-	//@Getter @Setter
-	//@Size(max = 50)
-	//@Column(name = "tipoVista")
-	//private String viewType;
-	
 	@Getter @Setter
 	@Size(max = 50)
 	@Column(name="icono")
@@ -87,7 +81,7 @@ public class MenuItem extends Audit implements Base, Comparable<Base>, java.io.S
 	// 0: command - 1: viewDafault
 	@Getter @Setter
 	@Column(name="tipus")
-	private byte type = 0;
+	private byte type = 1;
 
 	public void setDescription(String pDescription) {
 				

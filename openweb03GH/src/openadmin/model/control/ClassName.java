@@ -17,7 +17,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import openadmin.model.Audit;
 import openadmin.model.Base;
@@ -46,9 +45,14 @@ public class ClassName extends Audit implements Base, java.io.Serializable {
 	/** Field that contains the description*/	
 	@Getter @Setter
 	@NotNull
-	@Size(min= 10, max = 80)
+	@Size(min= 3, max = 25)
 	@Column(unique=true)
-	private String description;	
+	private String description;
+	
+	@Getter @Setter
+	@NotNull
+	@Size(min= 3, max = 80)
+	private String packet;	
 
 	/**
 	 * Constructor of the class ActionClass.

@@ -16,6 +16,7 @@ import openadmin.action.ContextAction;
 import openadmin.model.control.User;
 import openadmin.util.lang.WebMessages;
 
+
 @Named
 @RequestScoped
 public class LoginAction implements Serializable{
@@ -39,23 +40,7 @@ public class LoginAction implements Serializable{
 		result = "index";
 		
 		//comprobar usuari i clau
-		if (usuari.getDescription().length() < 4 || usuari.getDescription().length() > 15) {
-			
-			WebMessages.messageError("error_validation_login");
-			
-		}
-		
-		else if (usuari.getPassword().length() < 5 || usuari.getPassword().length() > 50) {
-			
-			WebMessages.messageError("error_validation_login");
-			
-		}
-		
-		else if (ctx.login(usuari)){
-			
-			result = "main";
-		
-		}
+		if (ctx.login(usuari))result = "main";
 		
 		return result;
 	}

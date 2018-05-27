@@ -265,13 +265,12 @@ public class MainScreen implements Serializable {
 		//Create object
 		if (null == obj) {
 			
-			obj = ReflectionUtils.createObject(pMenuItem.getClassName().getDescription());
-			
-			
+			obj = ReflectionUtils.createObject(pMenuItem.getClassName().getPacket() + "." + pMenuItem.getClassName().getDescription());
+				
 		}
 		
 		//Default View
-		if (pMenuItem.getType() == 0) {
+		if (pMenuItem.getType() == 1) {
 					
 			Integer numberView = ctx.numberView()+1;
 			ViewFacade view = new DefaultView();

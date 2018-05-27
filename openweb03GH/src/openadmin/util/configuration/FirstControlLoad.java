@@ -206,7 +206,7 @@ public class FirstControlLoad {
 		for (String[] s: ReadData(path + actionClassDataFile,"\\|")) {
 			
 			ClassName aClass=new ClassName(s[0].trim());
-			 
+			aClass.setPacket(s[1].trim()); 
 			
 			System.out.println(s[0]+"-->ACTION CLASS:"+aClass.getDescription());
 			
@@ -260,10 +260,11 @@ public class FirstControlLoad {
 			
 			MenuItem menuItem=new MenuItem();
 			menuItem.setClassName((ClassName) connection.findObjectDescription(new ClassName(s[1].trim())));
-			menuItem.setDescription(s[1].trim() + "_" + s[0].trim());
+			menuItem.setDescription(s[1].trim());
+			//menuItem.setDescription(s[1].trim() + "_" + s[0].trim());
 			menuItem.setIcon(s[2].trim());
 			menuItem.setTypeNode((s[3].trim()));
-			menuItem.setViewType(s[4].trim());
+			menuItem.setType(Byte.parseByte(s[4].trim()));
 			menuItem.setOrden(Integer.parseInt(s[5].trim()));
 			
 			if (menuItem.getTypeNode().equals("p")){
@@ -349,7 +350,8 @@ public class FirstControlLoad {
 					ActionViewRole actionViewRole = new ActionViewRole();
 					
 					MenuItem menuItem = new MenuItem();
-					menuItem.setDescription(s[1].trim()+"_"+s[4].trim());
+					//menuItem.setDescription(s[1].trim()+"_"+s[4].trim());
+					menuItem.setDescription(s[1].trim());
 					
 					Action action = new Action();
 					action.setDescription(s[1].trim()+"_"+s[0].trim());
